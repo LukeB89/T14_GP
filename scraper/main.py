@@ -3,6 +3,7 @@ Created on 10 Feb 2020
 
 @author: Luke Byrne
 '''
+# Import liberies for use of the  
 import time
 from datetime import datetime
 import requests
@@ -11,24 +12,30 @@ import csv
 import os.path
   
 
-
 def json_parser():
+    '''JSON Parser for Dublin Bikes
+    
+        takes no inputs and returns no output. It will create a CSV file if 
+        one is not present and store results there.'''
+    
+#   Variable Dclarations 
     outdict = {}
     linecount = 0
-#     code to be used when retrieving JSON file from api
+    
+#   code to be used when retrieving JSON file from api
     url = 'https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=4524f0f3a8f5e1b52a6de292a90ae8505b73c416'
     r = requests.get(url)
     data = r.json()
-#     print("data recieved")
+#     print("data recieved") # uncomment for debugging
 
-    
-#     data will be replaced with above json to iliminate need for JSON file
-#     with open('data.txt') as json_file:
-#     data = json.load(json_file)
+#   goes through each line in the data and builds a dictionary.
+#   the dictionary will store each value under the one key.  
     for line in data:
         linecount += 1
         for key in line:
-            
+            # position is a special case. position contains a dictionary as a result
+            # this code extracts the "lat" and "lng" and stores them as their own 
+            # key in the dictionary
             if key == "position":
                 if "lat" not in outdict and "lng" not in outdict:
                     tkey = "lat"
@@ -42,6 +49,8 @@ def json_parser():
                     outdict[tkey].append(line[key][tkey])
                     tkey = "lng"
                     outdict[tkey].append(line[key][tkey])
+            # last_update is also a special case. this contains a time stamp that is converted
+            # first 10 digits are used as the time stamp.
             elif key == "last_update":
                 d = str(line[key])
                 d_time = datetime.fromtimestamp(int(d[:10]))
@@ -53,7 +62,7 @@ def json_parser():
                 outdict[key].append(line[key])
             else:
                 outdict[key].append(line[key])
-
+#   checks to see if the CSV file is there. if not it will make it in the same folder as the python file.
     if os.path.isfile('bikesdata.csv'):
         pass
     else:
@@ -61,8 +70,7 @@ def json_parser():
             pass
     
     
-    #         read from csv code, checks if first line exsits and assigns row 1
-    
+    #         read from csv code, checks if first line exsits and assigns head_row
     with open('bikesdata.csv', 'r') as file:
         csvdata = csv.reader(file)
         try:
@@ -70,11 +78,12 @@ def json_parser():
         except:
             head_row = []
 
-        
-        
+#   opens the CSV file and assigns it to appened in the writing format   
     with open('bikesdata.csv', 'a', newline='') as file:
         rowout = csv.writer(file)
-        
+        # compares the head_row to the list of keys in the dictionary
+        # if all of them are there  it passes if not it creates a head row.
+        # this is to ensure that an empty file will have a header row 
         if all(col in head_row for col in list(outdict.keys())):
 #             print("already exsits")
             pass
@@ -82,7 +91,11 @@ def json_parser():
 #             print("creating now")
             head_row = list(outdict.keys())
             rowout.writerow(head_row)
-        
+        # this builds each of the rows with the information to be stored
+        # it does this by enumerating the head_row so that it can insert the information
+        # into the correct index in the row and uses the key to access the dictionary value it needs
+        # the line number stored in index refers to the index in the list that is stored in the dictionary
+        # index 0 refers to the first entry which in turn refers to the first line from the JSON file
         row = []
         for index in range(linecount):
             for i, key in enumerate(head_row):
@@ -94,8 +107,8 @@ def json_parser():
 
 def main():
     
-#     main code that will be run concurrently every minuete
-#     too be filled at a later date just getting the base working now
+#   main code that will be run concurrently every minute
+#   each loop will run the json_parser and every 60 loops will display its progress
     count = 0
     while True:
         json_parser()
