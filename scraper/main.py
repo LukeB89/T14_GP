@@ -23,11 +23,13 @@ def json_parser():
     linecount = 0
     
 #   code to be used when retrieving JSON file from api
-    url = 'https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=4524f0f3a8f5e1b52a6de292a90ae8505b73c416'
-    r = requests.get(url)
-    data = r.json()
-#     print("data recieved") # uncomment for debugging
-
+    try:
+        url = 'https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=4524f0f3a8f5e1b52a6de292a90ae8505b73c416'
+        r = requests.get(url)
+        data = r.json()
+#         print("data recieved") # uncomment for debugging
+    except:
+        return False
 #   goes through each line in the data and builds a dictionary.
 #   the dictionary will store each value under the one key.  
     for line in data:
@@ -103,19 +105,26 @@ def json_parser():
             rowout.writerow(row)
             row.clear()
                 
-    return
+    return True
 
 def main():
     
 #   main code that will be run concurrently every minute
 #   each loop will run the json_parser and every 60 loops will display its progress
     count = 0
-    while True:
-        json_parser()
-        if count%60 ==0:
-            print("Pulled {} items".format(count))
-        time.sleep(60)
-        count += 1
+    
+    with open('log.txt', 'a', newline='') as file:
+        log_out = csv.writer(file)
+        
+        while True:
+            log = json_parser()
+            if not log:
+                log_out.writerow(["Error detected in API retrieval. Resetting"])
+            if count%60 ==0:
+                str_o = "Pulled {} items".format(count)
+                log_out.writerow([str_o])
+            time.sleep(60)
+            count += 1
     return
 if __name__ == '__main__':
     main()
