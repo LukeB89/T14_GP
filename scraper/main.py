@@ -109,22 +109,16 @@ def json_parser():
 
 def main():
     
-#   main code that will be run concurrently every minute
-#   each loop will run the json_parser and every 60 loops will display its progress
-    count = 0
+#   main code which is tasked with running the JSON Parser
+#   keeps a log to ensure the returned API information doesnt crash the program.
     
     with open('log.txt', 'a', newline='') as file:
         log_out = csv.writer(file)
+        log = json_parser()
+        if not log:
+            log_out.writerow(["Error detected in API retrieval."])
         
-        while True:
-            log = json_parser()
-            if not log:
-                log_out.writerow(["Error detected in API retrieval. Resetting"])
-            if count%60 ==0:
-                str_o = "Pulled {} items".format(count)
-                log_out.writerow([str_o])
-            time.sleep(60)
-            count += 1
+
     return
 if __name__ == '__main__':
     main()
