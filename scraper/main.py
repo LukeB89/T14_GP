@@ -1,10 +1,6 @@
 '''
 Created on 10 Feb 2020
-<<<<<<< HEAD
-v0.2
-=======
-Version: 0.3
->>>>>>> branch 'master' of https://github.com/LukeB89/T14_GP
+Version: 0.2
 @author: Luke Byrne
 main method to call scrapers
 '''
