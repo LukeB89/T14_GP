@@ -5,10 +5,16 @@ Created on 16 Feb 2020
 '''
 
 from flask import Flask, render_template
+from sqlalchemy import create_engine
 
 app = Flask(__name__)
 
+engine = create_engine("mysql://admin:SET14GP2020@dublinbikes.c69eptjjnovd.us-east-1.rds.amazonaws.com:3306/dublinbikes")
+engine.connect()
+print(engine.table_names())
+
 test_data = [
+
     {
         'location': 'Capel Street',
         'num_bikes': '12',
@@ -28,7 +34,7 @@ def dub_bikes():
     return render_template('home.html', posts=test_data)  # pulls home.html template from templates folder
 
 
-@app.route("/about")
+@app.route("/about")  # added for testing purposes. Will be helpful if we needed to add any extra pages later on
 def about():
     return render_template('home.html', title='About')
 
