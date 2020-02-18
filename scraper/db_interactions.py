@@ -66,7 +66,6 @@ def db_query(**kwargs):
     # execute the sql query
     try:
         dbcursor = connection.cursor(buffered=True)
-        print(sql)
 
         # on insert query
         if kwargs["query"] == "push":
