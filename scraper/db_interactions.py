@@ -93,5 +93,5 @@ def db_query(**kwargs):
 
 
 # db_query(query="push", table="weather", data=flatten_dict(get_weather_data()))
-sample_data = {'number': 249, 'contract_name': 'dublin', 'name': 'SMITHFIELD NORTH', 'address': 'Smithfield North', 'lat': 53.349562, 'lng': -6.278198}
-print(db_query(query="pull", table="static"))
+# sample_data = {'number': 249, 'contract_name': 'dublin', 'name': 'SMITHFIELD NORTH', 'address': 'Smithfield North', 'lat': 53.349562, 'lng': -6.278198}
+# print(db_query(query="pull", table="static"))
