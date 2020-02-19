@@ -1,6 +1,6 @@
 '''
 Created on 10 Feb 2020
-
+Version: 0.2
 @author: Luke Byrne
 '''
 # Import liberies for use of the  
