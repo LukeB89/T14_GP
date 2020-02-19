@@ -15,7 +15,7 @@ def db_query(**kwargs):
     Takes **kwargs: 'query', 'table', 'data'. """
 
     # dict that associates value of **kwarg["query"] with sql query
-    valid_queries = {"push": "INSERT INTO", "pull": "SELECT * FROM", "update": "UPDATE"}
+    valid_queries = {"push": "INSERT INTO", "pull": "SELECT * FROM", "update": "UPDATE", "keys": "SHOW KEYS FROM"}
 
     # dict that associates passed **kwarg["table"] with a valid table
     valid_tables = {"weather": "dublinbikes.weather_data",
@@ -44,10 +44,16 @@ def db_query(**kwargs):
 
     if "data" in kwargs:
         data = kwargs["data"]
+
+    sql = query + " " + table
+
+    # if db query is to insert rows;
+    if kwargs["query"] == "push":
         values = []
         fields = ""
         fields_type = ""
 
+        # extract each key, value and datatype from data into list 'values' & strings 'fields' & 'fields_type'
         for key in data:
             if len(fields) < 1:
                 fields += key
@@ -58,15 +64,37 @@ def db_query(**kwargs):
 
             values.append(str(data[key]))
 
-        sql = query + " " + table + " (" + fields + ") VALUES (" + fields_type + ")"
+        sql += " (" + fields + ") VALUES (" + fields_type + ")"
 
-    else:
-        sql = query + " " + table
+    # else if db query is to update rows;
+    elif kwargs["query"] == "update":
+
+        # query db for table primary keys
+        p_keys = []
+        for item in db_query(query="keys", table=kwargs["table"]):
+            p_keys.append(item[4])
+
+        sql += " SET"
+
+        for key in data:
+            if key not in p_keys:
+                sql += " `%s` = '%s'," % (key, data[key])
+        sql = sql[:-1]
+
+        sql += " WHERE"
+        for key in p_keys:
+            if p_keys.index(key) > 0:
+                sql += " AND"
+            sql += " %s = '%s'" % (key, data[key])
+        print(sql)
+
+    # else if db query is to show keys;
+    elif kwargs["query"] == "keys":
+        sql += " WHERE key_name = 'PRIMARY'"
 
     # execute the sql query
     try:
         dbcursor = connection.cursor(buffered=True)
-        print(sql)
 
         # on insert query
         if kwargs["query"] == "push":
@@ -79,7 +107,7 @@ def db_query(**kwargs):
             connection.commit()
 
         # on select query
-        elif kwargs["query"] == "pull":
+        elif kwargs["query"] == "pull" or "keys":
             dbcursor.execute(sql)
             return dbcursor.fetchall()
 
@@ -90,8 +118,3 @@ def db_query(**kwargs):
     except:
         print(traceback.format_exc())
         return False
-
-
-# db_query(query="push", table="weather", data=flatten_dict(get_weather_data()))
-# sample_data = {'number': 249, 'contract_name': 'dublin', 'name': 'SMITHFIELD NORTH', 'address': 'Smithfield North', 'lat': 53.349562, 'lng': -6.278198}
-# print(db_query(query="pull", table="static"))
