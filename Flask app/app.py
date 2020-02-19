@@ -11,7 +11,6 @@ app = Flask(__name__)
 
 engine = create_engine("mysql://admin:SET14GP2020@dublinbikes.c69eptjjnovd.us-east-1.rds.amazonaws.com:3306/dublinbikes")
 engine.connect()
-print(engine.table_names())
 
 test_data = [
 
