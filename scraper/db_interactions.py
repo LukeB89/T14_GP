@@ -86,6 +86,7 @@ def db_query(**kwargs):
             if p_keys.index(key) > 0:
                 sql += " AND"
             sql += " %s = '%s'" % (key, data[key])
+
         print(sql)
 
     # else if db query is to show keys;
@@ -104,17 +105,17 @@ def db_query(**kwargs):
         # on update query
         elif kwargs["query"] == "update":
             dbcursor.execute(sql)
-            connection.commit()
+            return connection.commit()
 
         # on select query
         elif kwargs["query"] == "pull" or "keys":
             dbcursor.execute(sql)
-            return dbcursor.fetchall()
+            dbcursor.fetchall()
 
         # query not defined
         else:
             print("Error: query not defined")
             return False
-    except:
-        print(traceback.format_exc())
-        return False
+
+    except Exception as e:
+        return e.errno, e.msg
