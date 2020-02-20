@@ -1,8 +1,6 @@
 {% extends "layout.html" %}
 {% block content %}
-    {% for post in posts %}
-        <h1>{{ post.location }}</h1>
-        <p>Number of bikes: {{ post.num_bikes }}</p>
-        <p>Weather: {{ post.weather }}</p>
+    {% for i in l1 %}
+        <h1>{{ i }}</h1>
     {% endfor %}
 {% endblock content %}
