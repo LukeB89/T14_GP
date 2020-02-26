@@ -5,8 +5,7 @@ Created on 11 Feb 2020
 
 import requests
 import json
-import time
-from datetime import datetime
+from db_interactions import db_query
 
 
 def get_weather_data(**kwargs):
@@ -30,27 +29,15 @@ def get_weather_data(**kwargs):
 
     # create openWeatherMap API query using input latitude, longitude and api key
     url = "http://api.openweathermap.org/data/2.5/weather?lat=" + str(lat) + "&lon=" + str(lon) + "&appid=" + key
-    print(url)
 
     # get weather info and convert to python dict
     response = requests.get(url)
     temp_dict = json.loads(response.text)
 
+    # remove redundant list (@ temp_dict["weather"][0])
     if "weather" in temp_dict:
         temp_dict["weather"] = temp_dict["weather"][0]
 
-    # stores data to be returned
-    out_dict = {}
-    """
-    # rename duplicate keys & remove redundant list (@ outdict["weather"][0])
-    for key in temp_dict:
-        if key == "weather":
-            out_dict[key] = temp_dict[key][0]
-            out_dict[key]["weather_id"] = temp_dict["weather"]["id"]
-    if "rain" in temp_dict:
-        out_dict["rain"]["precipitation_chance"] = temp_dict["rain"]["1h"]
-    out_dict["sys"]["system_id"] = outtemp_dict["sys"]["id"]
-    """
     return temp_dict
 
 
@@ -60,7 +47,7 @@ def flatten_dict(some_dict):
     keys contained in nested dictionaries. Duplicate keys must be renamed prior to calling
     this function otherwise it will overwrite data!! This is a recursive function!!"""
 
-    outdict = {}                                            # init empty dict to hold output
+    out_dict = {}                                            # init empty dict to hold output
 
     keys = list(some_dict.keys())
 
@@ -68,16 +55,16 @@ def flatten_dict(some_dict):
 
         if type(some_dict[i]) == dict:                      # if key is nested dict; call flatten_dict(key)
             some_dict[i] = prefix_keys(some_dict[i], i)
-            outdict.update(flatten_dict(some_dict[i]))
+            out_dict.update(flatten_dict(some_dict[i]))
 
         elif type(some_dict[i]) == list:                    # else if key is nested list; call flatten_dict(key)
             for j in some_dict[i]:
-                outdict.update(flatten_dict(j))
+                out_dict.update(flatten_dict(j))
 
         else:                                               # else; copy key-value to output dict
-            outdict[i] = some_dict.pop(i)
+            out_dict[i] = some_dict.pop(i)
 
-    return outdict
+    return out_dict
 
 
 def prefix_keys(some_dict, prefix):
@@ -91,18 +78,21 @@ def prefix_keys(some_dict, prefix):
     return some_dict
 
 
-def get_weather():
-    """Test Loop"""
-    count = 0
-    while count < 3:
-        x = get_weather_data()
+def get_weather_all():
+    """updates dynamic weather data for each weather station
+    listed in the "weather_static" table on the RDS database"""
 
-        y = flatten_dict(x)
+    # get weather station data from database table "weather_static"
+    weather_stations = db_query(query="pull", table="w_static")
 
-        # open weather data updated one every 10 minutes
+    # get the weather data for each weather station in the "weather_static"
+    # table and push to database "weather_dynamic" table
+    for station in weather_stations:
+        weather_data = flatten_dict(get_weather_data(lat=station["latitude"], lon=station["longitude"]))
+        # remove lat & long data from weather_data
+        weather_data.pop("coord_lat")
+        weather_data.pop("coord_lon")
+        db_query(query="push", table="w_dynamic", data=weather_data)
 
-        with open("temp.txt", "a") as file:
-            file.write(json.dumps(y))
 
-        count += 1
-        time.sleep(600)
+get_weather_all()
