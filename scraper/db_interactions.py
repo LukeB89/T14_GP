@@ -95,22 +95,30 @@ def db_query(**kwargs):
 
     # execute the sql query
     try:
-        dbcursor = connection.cursor(buffered=True)
 
         # on insert query
         if kwargs["query"] == "push":
+            dbcursor = connection.cursor(buffered=True)
             dbcursor.execute(sql, values)
             connection.commit()
 
         # on update query
         elif kwargs["query"] == "update":
+            dbcursor = connection.cursor(buffered=True)
             dbcursor.execute(sql)
             return connection.commit()
 
         # on select query
-        elif kwargs["query"] == "pull" or "keys":
+        elif kwargs["query"] == "pull":
+            dbcursor = connection.cursor(dictionary=True, buffered=True)
             dbcursor.execute(sql)
-            dbcursor.fetchall()
+            return dbcursor.fetchall()
+
+        # on keys query
+        elif kwargs["query"] == "keys":
+            dbcursor = connection.cursor(buffered=True)
+            dbcursor.execute(sql)
+            return dbcursor.fetchall()
 
         # query not defined
         else:
