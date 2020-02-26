@@ -20,7 +20,9 @@ def db_query(**kwargs):
     # dict that associates passed **kwarg["table"] with a valid table
     valid_tables = {"weather": "dublinbikes.weather_data",
                     "static": "dublinbikes.static_data",
-                    "dynamic": "dublinbikes.dynamic_data"}
+                    "dynamic": "dublinbikes.dynamic_data",
+                    "w_static": "dublinbikes.weather_static",
+                    "assoc": "dublinbikes.bike_weather_assoc"}
 
     # host & login information to database
     host = "dublinbikes.c69eptjjnovd.us-east-1.rds.amazonaws.com"
