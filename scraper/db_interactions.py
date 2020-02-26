@@ -18,7 +18,7 @@ def db_query(**kwargs):
     valid_queries = {"push": "INSERT INTO", "pull": "SELECT * FROM", "update": "UPDATE", "keys": "SHOW KEYS FROM"}
 
     # dict that associates passed **kwarg["table"] with a valid table
-    valid_tables = {"weather": "dublinbikes.weather_data",
+    valid_tables = {"w_dynamic": "dublinbikes.weather_dynamic",
                     "static": "dublinbikes.static_data",
                     "dynamic": "dublinbikes.dynamic_data",
                     "w_static": "dublinbikes.weather_static",
