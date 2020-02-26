@@ -2,43 +2,47 @@
 Created on 15 Feb 2020
 @author: Milo Bashford
 
-writes a csv file containing location & id details for the weather station
-associated with each dublin bikes station.
+updates the static information for weather stations associated
+with individual bike stations stored on the RDS database
 """
 
-import csv
 import time
+
 
 from weather import get_weather_data
 from weather import flatten_dict
-
-# read "bikesdata.csv" and make dict with lat, lng, name & number for each unique bikestation
-
-with open("bikesdata.csv", newline="") as infile:
-    outdict = {}
-    infile = csv.DictReader(infile)
-    for row in infile:
-        outdict[row["name"]] = {"number": row["number"], "lat": row["lat"], "lon": row["lng"]}
+from db_interactions import db_query
 
 
-print(len(outdict))
+def get_weather_stations():
+    """updates the static information for weather stations associated with individual bike stations"""
 
-# get weather data for each bike station in dict
-weather_data = {}
+    # request all bike station info from the bikes_static table and store station ID, latitude and longitude
+    rows = db_query(query="pull", table="static")
 
-for station in outdict:
-    request = flatten_dict(get_weather_data(lat=outdict[station]["lat"], lon=outdict[station]["lon"]))
-    weather_data[station] = {"bike_station": station, "lat": request["lat"], "lon": request["lon"],
-                             "w_station": request["name"], "id": request["system_id"]}
+    for row in rows:
+        print("updating weather station data for", row["name"])
+        request = flatten_dict(get_weather_data(lat=row["lat"], lon=row["lng"]))
 
-    # sleep between every loop to avoid over pining the weather data api
-    time.sleep(1)
+        # update "weather_static" table with station information
+        w_static_info = {"w_station_name": request["name"],
+                         "latitude": request["coord_lat"],
+                         "longitude": request["coord_lon"]}
 
-print(weather_data)
-csv_columns = ["bike_station", "lat", "lon", "w_station", "id"]
+        db_query(query="push", table="w_static", data=w_static_info)
 
-with open("stations_data.csv", "w", newline="") as file:
-    fileout = csv.DictWriter(file, fieldnames=csv_columns)
-    fileout.writeheader()
-    for row in weather_data:
-        fileout.writerow(weather_data[row])
+        # update "bike_weather_assoc table
+        assoc_info = {"bike_station_id": row["number"], "weather_station": request["name"]}
+        try:
+            db_query(query="push", table="assoc", data=assoc_info)
+        except:
+            db_query(query="update", table="assoc", data=assoc_info)
+            print("attempting to update row")
+
+        # sleep between every loop to avoid overloading the weather data api (60 request per min limit)
+        time.sleep(1)
+
+    print("Done!")
+
+
+get_weather_stations()
