@@ -9,8 +9,8 @@ with individual bike stations stored on the RDS database
 import time
 
 
-from weather import get_weather_data
-from weather import flatten_dict
+from get_weather_data import get_weather_data
+from get_weather_data import flatten_dict
 from db_interactions import db_query
 
 
@@ -27,9 +27,16 @@ def get_weather_stations():
         # update "weather_static" table with station information
         w_static_info = {"w_station_name": request["name"],
                          "latitude": request["coord_lat"],
-                         "longitude": request["coord_lon"]}
+                         "longitude": request["coord_lon"],
+                         "base": request["base"],
+                         "sys_type": request["sys_type"],
+                         "sys_id": request["sys_id"],
+                         "sys_country": request["sys_country"],
+                         "timezone": request["timezone"],
+                         "id": request["id"],
+                         "cod": request["cod"]}
 
-        db_query(query="push", table="w_static", data=w_static_info)
+        db_query(query="update", table="w_static", data=w_static_info)
 
         # update "bike_weather_assoc table
         assoc_info = {"bike_station_id": row["number"], "weather_station": request["name"]}
