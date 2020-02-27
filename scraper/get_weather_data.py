@@ -89,7 +89,14 @@ def get_weather_all():
     # table and push to database "weather_dynamic" table
     for station in weather_stations:
         weather_data = flatten_dict(get_weather_data(lat=station["latitude"], lon=station["longitude"]))
-        # remove lat & long data from weather_data
+        # remove static data from weather_data(except for key)
         weather_data.pop("coord_lat")
         weather_data.pop("coord_lon")
+        weather_data.pop("base")
+        weather_data.pop("sys_type")
+        weather_data.pop("sys_id")
+        weather_data.pop("sys_country")
+        weather_data.pop("timezone")
+        weather_data.pop("id")
+        weather_data.pop("cod")
         db_query(query="push", table="w_dynamic", data=weather_data)
