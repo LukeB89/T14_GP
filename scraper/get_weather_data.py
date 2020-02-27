@@ -100,3 +100,6 @@ def get_weather_all():
         weather_data.pop("id")
         weather_data.pop("cod")
         db_query(query="push", table="w_dynamic", data=weather_data)
+
+
+get_weather_all()
