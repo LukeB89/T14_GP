@@ -97,8 +97,6 @@ def db_query(**kwargs):
                 sql += " AND"
             sql += " %s = '%s'" % (key, data[key])
 
-        print(sql)
-
     # else if db query is to show keys;
     elif kwargs["query"] == "keys":
         sql += " WHERE key_name = 'PRIMARY'"
