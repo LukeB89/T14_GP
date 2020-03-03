@@ -6,10 +6,17 @@ Created on 16 Feb 2020
 
 from flask import Flask, render_template, g, jsonify
 from sqlalchemy import create_engine
+from configparser import ConfigParser
+
+# read DataBase info from the config file
+config = ConfigParser()
+config.read("config.ini")
+options = config["DataBase"]
 
 app = Flask(__name__)
 
-engine = create_engine("mysql://admin:SET14GP2020@dublinbikes.c69eptjjnovd.us-east-1.rds.amazonaws.com:3306/dublinbikes")
+engine = create_engine("mysql://" + options["user"] + ":" + options["passwd"] + "@"
+                       + options["host"] + "/" + options["database"])
 engine.connect()
 
 @app.route("/test")
