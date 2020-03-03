@@ -5,7 +5,13 @@ Created on 11 Feb 2020
 
 import requests
 import json
+from configparser import ConfigParser
 from db_interactions import db_query
+
+# read DataBase info from the config file
+config = ConfigParser()
+config.read("config.ini")
+options = config["weatherAPI"]
 
 
 def get_weather_data(**kwargs):
@@ -25,7 +31,7 @@ def get_weather_data(**kwargs):
     if "key" in kwargs:
         key = kwargs["key"]
     else:
-        key = "86baa129046e5cbaeb16af074356e579"        # default openWeatherMap API key
+        key = options["key"]                            # default openWeatherMap API key
 
     # create openWeatherMap API query using input latitude, longitude and api key
     url = "http://api.openweathermap.org/data/2.5/weather?lat=" + str(lat) + "&lon=" + str(lon) + "&appid=" + key
