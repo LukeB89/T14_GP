@@ -15,7 +15,12 @@ import csv
 import os.path
 import traceback
 import timeit as t
+from configparser import ConfigParser
 
+# read DataBase info from the config file
+config = ConfigParser()
+config.read("config.ini")
+options = config["bikesAPI"]
 
 
 def parse_bikes_data():
@@ -24,14 +29,14 @@ def parse_bikes_data():
         takes no inputs and returns no output. It will create a CSV file if 
         one is not present and store results there.'''
     
-#   Variable Dclarations 
+#   Variable Declarations
     dynamic_dict = dict.fromkeys(["number", "last_update", "bike_stands", "available_bike_stands", "available_bikes", "status"], None)
-    static_dict = dict.fromkeys(["number","contract_name", "name", "address", "lat", "lng", "banking", "bonus"], None)
+    static_dict = dict.fromkeys(["number", "contract_name", "name", "address", "lat", "lng", "banking", "bonus"], None)
     linecount = 0
     
 #   code to be used when retrieving JSON file from api
     try:
-        url = 'https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=4524f0f3a8f5e1b52a6de292a90ae8505b73c416'
+        url = 'https://api.jcdecaux.com/vls/v1/stations?contract=dublin&apiKey=' + options["key"]
         r = requests.get(url)
         data = r.json()
     except:
@@ -61,7 +66,7 @@ def parse_bikes_data():
                 print("{} not vaild data".format(key))
         
         print(dynamic_dict)
-        db.db_query(query= 'push', table= 'dynamic', data= dynamic_dict )
+        db.db_query(query='push', table='dynamic', data=dynamic_dict)
        
     return True
 
