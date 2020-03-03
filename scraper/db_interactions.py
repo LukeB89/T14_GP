@@ -7,6 +7,12 @@ methods for retrieving and sending data to the Team 14 RDS Database
 
 import mysql.connector
 import traceback
+from configparser import ConfigParser
+
+# read DataBase info from the config file
+config = ConfigParser()
+config.read("config.ini")
+options = config["DataBase"]
 
 
 def db_query(**kwargs):
@@ -25,10 +31,10 @@ def db_query(**kwargs):
                     "assoc": "dublinbikes.bike_weather_assoc"}
 
     # host & login information to database
-    host = "dublinbikes.c69eptjjnovd.us-east-1.rds.amazonaws.com"
-    passwd = "SET14GP2020"
-    user = "admin"
-    database = "dublinbikes"
+    host = options["host"]
+    passwd = options["passwd"]
+    user = options["user"]
+    database = options["database"]
 
     # establish connection to database
     connection = mysql.connector.connect(host=host, user=user, passwd=passwd, database=database)
