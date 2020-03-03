@@ -1,6 +1,6 @@
 """
 Created on 18 Feb 2020
-Version: 0.1
+Version: 0.1.01
 @author: Luke Byrne
 
 methods for retrieving and parsing information from the Dublin bikes station
@@ -53,12 +53,6 @@ def parse_bikes_data():
                 static_dict[tkey] = line[key][tkey]
                 tkey = "lng"
                 static_dict[tkey] = line[key][tkey]
-            # last_update is also a special case. this contains a time stamp that is converted
-            # first 10 digits are used as the time stamp.
-            elif key == "last_update":
-                d = str(line[key])
-                d_time = datetime.fromtimestamp(int(d[:10]))
-                dynamic_dict[key] = d_time
             elif key in dynamic_dict:
                 dynamic_dict[key] = line[key]
             elif key in static_dict:
@@ -66,9 +60,9 @@ def parse_bikes_data():
             else:
                 print("{} not vaild data".format(key))
         
+        print(dynamic_dict)
         db.db_query(query= 'push', table= 'dynamic', data= dynamic_dict )
        
     return True
-
 
 
