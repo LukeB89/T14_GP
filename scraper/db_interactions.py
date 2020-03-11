@@ -104,10 +104,7 @@ def db_query(**kwargs):
     # else if db query is to show keys;
     elif kwargs["query"] == "keys":
         sql += " WHERE key_name = 'PRIMARY'"
-    
-    else:
-        return "Unknown Query"
-    
+
     # execute the sql query
     try:
 
