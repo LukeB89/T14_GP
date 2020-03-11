@@ -1,7 +1,6 @@
 """
 Created on 16 Feb 2020
 @author: Milo Bashford
-
 methods for retrieving and sending data to the Team 14 RDS Database
 """
 
@@ -28,9 +27,7 @@ def db_query(**kwargs):
                     "static": "dublinbikes.static_data",
                     "dynamic": "dublinbikes.dynamic_data",
                     "w_static": "dublinbikes.weather_static",
-                    "assoc": "dublinbikes.bike_weather_assoc",
-                    "w_current": "dublinbikes.weather_current",
-                    "current": "dublinbikes.bikes_current"}
+                    "assoc": "dublinbikes.bike_weather_assoc"}
 
     # host & login information to database
     host = options["host"]
@@ -54,6 +51,9 @@ def db_query(**kwargs):
 
     if "data" in kwargs:
         data = kwargs["data"]
+    
+    if "pkeys" in kwargs:
+        pkeys = kwargs["pkeys"]
 
     sql = query + " " + table
 
@@ -87,20 +87,25 @@ def db_query(**kwargs):
         sql += " SET"
 
         for key in data:
-            if key not in p_keys:
-                sql += " `%s` = '%s'," % (key, data[key])
+            sql += " `%s` = '%s'," % (key, data[key])
         sql = sql[:-1]
 
         sql += " WHERE"
-        for key in p_keys:
-            if p_keys.index(key) > 0:
-                sql += " AND"
-            sql += " %s = '%s'" % (key, data[key])
+        for key in pkeys:
+            if key in p_keys:
+                if p_keys.index(key) > 0:
+                    sql += " AND"
+                sql += " %s = '%s'" % (key, pkeys[key])
+            else:
+                return "Primary Keys are: ", p_keys
 
     # else if db query is to show keys;
     elif kwargs["query"] == "keys":
         sql += " WHERE key_name = 'PRIMARY'"
-
+    
+    else:
+        return "Unknown Query"
+    
     # execute the sql query
     try:
 

@@ -27,7 +27,8 @@ def dub_bikes():
 
 @app.route("/")
 def bikemap():
-    return render_template('map.html', title='Map')
+    statinfo = engine.execute('select number, address, lat, lng from static_data')
+    return render_template('map.html', title='Map', statinfo=statinfo)
 
 
 # allows us to run directly with python i.e. don't have to set env variables each time

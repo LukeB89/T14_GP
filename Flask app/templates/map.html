@@ -5,9 +5,9 @@
     <meta name="viewport" content="width=device-width", initial-scale="1", shrink-to-fit="no">
     <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='main.css') }}">
     {% if title %}
-    <title>Dublin Bikes - {{ title }}</title>
+        <title>Dublin Bikes - {{ title }}</title>
     {% else %}
-    <title>Dublin Bikes</title>
+        <title>Dublin Bikes</title>
     {% endif %}
 
     <style>
@@ -24,25 +24,57 @@
 
 </head>
 <body>
-<header>
-    <h1>Map Page</h1>
-</header>
-<div id="map">Map should be here...</div>
-<script type="text/javascript">
-    function initMap() {
-        console.log("HI");
+    <header>
+        <h1>Map Page</h1>
+    </header>
+    <div id="map">Map should be here...</div>
+    <script type="text/javascript">
+        function initMap() {
 
-        radius = 20, zoom = 14;
+            radius = 20, zoom = 14;
 
-        var location = {lat: 53.3498, lng: -6.2603};
-        var map = new google.maps.Map(document.getElementById("map"), {
-            zoom : zoom,
-            center : location
-        });
-        console.log(map)
-    }
-</script>
-<script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5ydZwuT-hJt9fmBA5_sHnIWeE3JgvjCY&callback=initMap"  async defer ></script>
+            var location = {lat: 53.3498, lng: -6.2603};
+            var map = new google.maps.Map(document.getElementById("map"), {
+                zoom : zoom,
+                center : location
+            });
+
+    <!--add markers-->
+
+            {% for i in statinfo %}
+                addMarkers({
+                    coords:{lat:{{ i[-2] }},lng:{{ i[-1] }}},
+                    content:'<h4>Station Number: {{ i[0] }}</h4><h4>Address: {{ i[1] }}</h4>'
+    <!--                iconImage:''-->
+                });
+            {% endfor %}
+
+            function addMarkers(prop){
+                var marker = new google.maps.Marker({
+                    position : prop.coords,
+                    map : map
+                });
+
+    <!--if clause to find availability to change icon colour here?-->
+
+    <!--add bike info windows-->
+
+            if(prop.content){
+                var infoWindow = new google.maps.InfoWindow({
+                    content : prop.content
+                });
+
+            }
+
+            marker.addListener('click', function(){
+                    infoWindow.open(map, marker);
+                });
+
+            }
+
+        }
+    </script>
+    <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5ydZwuT-hJt9fmBA5_sHnIWeE3JgvjCY&callback=initMap"  async defer ></script>
 
 </body>
 </html>
