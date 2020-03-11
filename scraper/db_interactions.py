@@ -27,7 +27,9 @@ def db_query(**kwargs):
                     "static": "dublinbikes.static_data",
                     "dynamic": "dublinbikes.dynamic_data",
                     "w_static": "dublinbikes.weather_static",
-                    "assoc": "dublinbikes.bike_weather_assoc"}
+                    "assoc": "dublinbikes.bike_weather_assoc",
+                    "w_current": "dublinbikes.weather_current",
+                    "current": "dublinbikes.bikes_current"}
 
     # host & login information to database
     host = options["host"]
