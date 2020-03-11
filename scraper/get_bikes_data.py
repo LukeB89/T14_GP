@@ -67,6 +67,15 @@ def parse_bikes_data():
         
         print(dynamic_dict)
         db.db_query(query='push', table='dynamic', data=dynamic_dict)
+
+        # update dynamic information held for bikes in table "bikes_dynamic": attempts
+        # to "insert" information as new row, calls "update" query on duplicate key error
+        response = db.db_query(query="push", table="current", data=dynamic_dict)
+        if response is not None:
+            # if the response is a duplicate key error perform an "update" query:
+            if response[0] == 1062:
+                db.db_query(query="update", table="current",
+                            data=dynamic_dict, pkeys={"number": dynamic_dict["number"]})
        
     return True
 
