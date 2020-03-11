@@ -105,7 +105,16 @@ def get_weather_all():
         weather_data.pop("timezone")
         weather_data.pop("id")
         weather_data.pop("cod")
+
         db_query(query="push", table="w_dynamic", data=weather_data)
+
+        # update dynamic information held for weather in table "weather_dynamic": attempts
+        # to "insert" information as new row, calls "update" query on duplicate key error
+        response = db_query(query="push", table="w_current", data=weather_data)
+        if response is not None:
+            # if the response is a duplicate key error perform an "update" query:
+            if response[0] == 1062:
+                db_query(query="update", table="w_current", data=weather_data, pkeys={"name": weather_data["name"]})
 
 
 get_weather_all()
