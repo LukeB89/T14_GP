@@ -6,6 +6,7 @@ main method to call scrapers
 '''
 # Import liberies for use of the  
 import get_bikes_data as bikes
+import get_weather_data as weather
 import csv
 
 def main():
@@ -19,7 +20,7 @@ def main():
         if not log:
             log_out.writerow(["Error detected in API retrieval."])
         
-
+        weather.get_weather_all()
     return
 if __name__ == '__main__':
     main()

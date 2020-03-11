@@ -116,5 +116,5 @@ def get_weather_all():
             if response[0] == 1062:
                 db_query(query="update", table="w_current", data=weather_data, pkeys={"name": weather_data["name"]})
 
-
-get_weather_all()
+# new weather scraper calls these no need for run function
+# get_weather_all()

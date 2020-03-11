@@ -56,6 +56,8 @@ def db_query(**kwargs):
     
     if "pkeys" in kwargs:
         pkeys = kwargs["pkeys"]
+    else:
+        pkeys = None
 
     sql = query + " " + table
 
@@ -88,18 +90,32 @@ def db_query(**kwargs):
 
         sql += " SET"
 
-        for key in data:
-            sql += " `%s` = '%s'," % (key, data[key])
-        sql = sql[:-1]
-
-        sql += " WHERE"
-        for key in pkeys:
-            if key in p_keys:
+        # checks to see if primary keys are supplied
+        # added in so that primary key data could be changed
+        if pkeys != None:
+            for key in data:
+                sql += " `%s` = '%s'," % (key, data[key])
+            sql = sql[:-1]
+    
+            sql += " WHERE"
+            for key in pkeys:
+                if key in p_keys:
+                    if p_keys.index(key) > 0:
+                        sql += " AND"
+                    sql += " %s = '%s'" % (key, pkeys[key])
+                else:
+                    return "Primary Keys are: ", p_keys
+        else:
+            for key in data:
+                if key not in p_keys:
+                    sql += " `%s` = '%s'," % (key, data[key])
+            sql = sql[:-1]
+    
+            sql += " WHERE"
+            for key in p_keys:
                 if p_keys.index(key) > 0:
                     sql += " AND"
                 sql += " %s = '%s'" % (key, pkeys[key])
-            else:
-                return "Primary Keys are: ", p_keys
 
     # else if db query is to show keys;
     elif kwargs["query"] == "keys":

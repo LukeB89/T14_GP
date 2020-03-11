@@ -65,7 +65,6 @@ def parse_bikes_data():
             else:
                 print("{} not vaild data".format(key))
         
-        print(dynamic_dict)
         db.db_query(query='push', table='dynamic', data=dynamic_dict)
 
         # update dynamic information held for bikes in table "bikes_dynamic": attempts
