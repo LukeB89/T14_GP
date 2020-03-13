@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    {% if title %}
+    <title>Dublin Bikes - {{ title }}</title>
+    {% else %}
+    <title>Dublin Bikes</title>
+    {% endif %}
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
+    <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='main.css') }}">
+</head>
+
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light navbar-right" style="background-color: #e3f2fd;">
+        <a class="navbar-brand" href="#">
+            <h1><strong>Dublin Bikes</strong></h1>
+        </a>
+        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+
+        <div class="navbar-collapse collapse" id="navbarColor03">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item">
+                    <a class="nav-link" href="/index">
+                        <h5>Map</h5>
+                    </a>
+                </li>
+                <li class="nav-item  active">
+                    <a class="nav-link" href="/info">
+                        <h5>Info</h5>
+                    </a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+
+    <div class="container-fluid">
+        <div class="row">
+            <div class="sidebar col-sm-2">
+                <nav class="nav flex-column">
+                    <ul class="nav flex-column nav_tabs">
+                        {% for station in stat_addr %}
+                        <li class="nav-item"><a class="nav-link" href="/info/{{station[0]}}">{{station[1]}}</a></li>
+                        {% endfor %}
+                    </ul>
+                </nav>
+            </div>
+
+            <main class="col-12 col-md-10 col-xl-10 ml-auto maindiv" role="main" style="background-color: #ff1111;">
+                <div class="row">
+                    <div class="col-6 col-md-5 col-xl-5" style="background-color: aqua">
+                        <!--put in station information related Items here-->
+                        {% if stat_info == "none" %}
+                        <h2 style="font-size: 1em"> Station Information </h2>
+                        {% else %}
+                        {% for line in stat_info %}
+                        <h1><strong> Station Information </strong></h1>
+                        <div class="container w-100" style="background-color: brown">
+                            <div class="row">
+                                <div class="col-5 col-sm-3 col-md-3 col-lg-4 col-xl-5">
+                                    <h4><strong>Station ID:</strong></h4>
+                                </div>
+                                <div class="col-5 col-md-4 col-lg-4 col-xl-5 ml-auto">
+                                    <h4>{{line[0]}}</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p></p>
+                            </div>
+                            <div class="row">
+                                <div class="col-5 col-md-4 col-xl-4">
+                                    <h4><strong>Station Name:</strong></h4>
+                                </div>
+                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
+                                    <h4>{{line[2]}}</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p></p>
+                            </div>
+                            <div class="row">
+                                <div class="col-5 col-md-4 col-xl-4">
+                                    <h4><strong>Station Address:</strong></h4>
+                                </div>
+                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
+                                    <h4>{{line[3]}}</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p></p>
+                            </div>
+                            <div class="row">
+                                <div class="col-5 col-md-4 col-xl-4">
+                                    <h4><strong>Station Latitude:</strong></h4>
+                                </div>
+                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
+                                    <h4>{{line[4]}}</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p></p>
+                            </div>
+                            <div class="row">
+                                <div class="col-5 col-md-4 col-xl-4">
+                                    <h4><strong>Station Longitude:</strong></h4>
+                                </div>
+                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
+                                    <h4>{{line[5]}}</h4>
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p></p>
+                            </div>
+                            <div class="row">
+                                <div class="col-5 col-md-4 col-xl-4">
+                                    <h4><strong>Payment Terminal:</strong></h4>
+                                </div>
+                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
+                                    {% if line[6] == "TRUE" %}
+                                    <h4>Yes</h4>
+                                    {% else %}
+                                    <h4>No</h4>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p></p>
+                            </div>
+                            <div class="row">
+                                <div class="col-5 col-md-4 col-xl-4">
+                                    <h4><strong>Bonus Station:</strong></h4>
+                                </div>
+                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
+                                    {% if line[7] == "TRUE" %}
+                                    <h4>Yes</h4>
+                                    {% else %}
+                                    <h4>No</h4>
+                                    {% endif %}
+                                </div>
+                            </div>
+                            <div class="row">
+                                <p></p>
+                            </div>
+                        </div>
+                        {% endfor%}
+                        {% endif %}
+
+                    </div>
+                    <div class="col-6 col-md-7 col-xl-7 ml-auto" style="background-color: aqua">
+                        <div class="row" style="background-color: green">
+                            <!--put in bike tred related information here-->
+                            <h2> Bikes Trend </h2>
+                        </div>
+                        <div class="row" style="background-color: yellow">
+                            <!--put in weather related information here-->
+                            <h2> Weather Forecast </h2>
+                        </div>
+                    </div>
+                </div>
+            </main>
+
+        </div>
+    </div>
+
+
+
+    <nav class=" navbar fixed-bottom navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+        <div class="container">
+            <div class="row w-100">
+                <div class="col">
+                </div>
+                <div class="col">
+                    <p class="text-center text-muted"><strong>Team 14</strong></p>
+                </div>
+                <div class="col"></div>
+            </div>
+        </div>
+    </nav>
+
+
+</body>
+
+</html>
