@@ -29,27 +29,25 @@
     </header>
     <div id="routeplanner">
         <b>From: </b>
-        <select id="from">
-        </select>
+        <select id="from"></select>
         <b>To: </b>
         <select id="to"></select>
     </div>
     <script type="text/javascript">
         var from = document.getElementById("from");
         var to = document.getElementById("to");
-        var locs = [];
         var stands = [];
 
         {% for i in statinfo %}
-            locs.push();
-            stands.push("{{ i[1] }}");
+            stands.push({lat:{{ i[-2] }},
+                        lng:{{ i[-1] }},
+                        address:"{{ i[1] }}"});
         {% endfor %}
 
         for (let i of stands) {
-            from.innerHTML += '<option value="' + i + ',dublin,ireland">' + i + '</option>';
-            to.innerHTML += '<option value="' + i + ',dublin,ireland">' + i + '</option>';
+            from.innerHTML += '<option value="' + i.lat + ',' + i.lng + '">' + i.address + '</option>';
+            to.innerHTML += '<option value="' + i.lat + ',' + i.lng + '">' + i.address + '</option>';
         }
-
     </script>
     <div id="map">Map should be here...</div>
     <script type="text/javascript">
@@ -78,7 +76,7 @@
                 directionsService.route({
                     origin: document.getElementById('from').value,
                     destination: document.getElementById('to').value,
-                    travelMode: 'DRIVING'
+                    travelMode: 'BICYCLING'
                     }, function (response, status) {
                         if (status === 'OK') {
                             directionsDisplay.setDirections(response);
