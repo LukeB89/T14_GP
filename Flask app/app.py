@@ -48,6 +48,10 @@ def bikemap():
     statinfo = engine.execute('select number, address, lat, lng from static_data')
     return render_template('map.html', title='Map', statinfo=statinfo)
 
+@app.route("/route")
+def routemap():
+    statinfo = engine.execute('select number, address, lat, lng from static_data')
+    return render_template('route.html', title='Route', statinfo=statinfo)
 
 # allows us to run directly with python i.e. don't have to set env variables each time
 if __name__ == '__main__':
