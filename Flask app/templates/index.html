@@ -15,8 +15,78 @@
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='main.css') }}">
 </head>
+<script type="text/javascript">
+    var stands = [];
+    {% for i in statinfo %}
+        stands.push({lat:{{ i[-2] }},
+        lng:{{ i[-1] }},
+        address:"{{ i[1] }}",
+        number:{{ i[0] }}});
+    {% endfor %}
+    function load(){
+        var from = document.getElementById("from");
+        var to = document.getElementById("to");
+        for (let i of stands) {
+            from.innerHTML += '<option value="' + i.lat + ',' + i.lng + '">' + i.address + '</option>';
+            to.innerHTML += '<option value="' + i.lat + ',' + i.lng + '">' + i.address + '</option>';
+            }
+    }
 
-<body>
+    function initMap() {
+
+        radius = 20, zoom = 14;
+
+        var location = {lat: 53.3498, lng: -6.2603};
+        var map = new google.maps.Map(document.getElementById("map"), {
+        zoom : zoom,
+        center : location
+        });
+
+        <!--add markers-->
+        
+        for (let i of stands) {
+            
+            addMarkers({
+            coords:{lat:i.lat,lng:i.lng},
+            content:'<h4>Station Number: '+i.number+'</h4><h4>Address: '+i.address+'</h4>'
+            <!--iconImage:''-->
+            });
+        }
+
+        function addMarkers(prop){
+            var marker = new google.maps.Marker({
+                position : prop.coords,
+                map : map
+            });
+
+            <!--if clause to find availability to change icon colour here?-->
+
+            <!--add bike info windows-->
+
+            if(prop.content){
+                var infoWindow = new google.maps.InfoWindow({
+                content : prop.content
+                });
+
+            }
+
+            marker.addListener('click', function(){
+                infoWindow.open(map, marker);
+            });
+
+        }
+
+    }
+    function buildURL(){
+        var origin = document.getElementById('from').value.split(',');
+        var dest = document.getElementById('to').value.split(',');
+        var url = "/index/route?tolat="+dest[0]+"&tolong="+dest[1];
+        url += "&fromlat="+origin[0]+"&fromlong="+origin[1];
+        window.location = url;
+    }
+</script>
+    
+<body onload="load()">
 
     <nav class="navbar navbar-expand-lg navbar-light navbar-right" style="background-color: #e3f2fd;">
         <a class="navbar-brand" href="#">
@@ -54,9 +124,9 @@
                                 </div>
                             </div>
                             <div class="col-5 col-md-4 col-xl-3" style="background-color: maroon">
-                                <div class="container">
+                                <div class="container w-100">
                                     <div class="row">
-                                        <div class="col-2"><strong>From:</strong></div>
+                                        <div class="col-2"><strong>From: </strong></div>
                                         <div class="col-5"><select id="from"></select></div>
                                     </div>
                                     <div class="row">
@@ -90,72 +160,8 @@
         </div>
     </nav>
     <script type="text/javascript">
-        var from = document.getElementById("from");
-        var to = document.getElementById("to");
-        var stands = [];
-
-        {% for i in statinfo %}
-            stands.push({lat:{{ i[-2] }},
-                        lng:{{ i[-1] }},
-                        address:"{{ i[1] }}"});
-        {% endfor %}
-
-        for (let i of stands) {
-            from.innerHTML += '<option value="' + i.lat + ',' + i.lng + '">' + i.address + '</option>';
-            to.innerHTML += '<option value="' + i.lat + ',' + i.lng + '">' + i.address + '</option>';
-        }
-         
-        function initMap() {
-
-            radius = 20, zoom = 14;
-
-            var location = {lat: 53.3498, lng: -6.2603};
-            var map = new google.maps.Map(document.getElementById("map"), {
-                zoom : zoom,
-                center : location
-            });
-
-    <!--add markers-->
-
-            {% for i in statinfo %}
-                addMarkers({
-                    coords:{lat:{{ i[-2] }},lng:{{ i[-1] }}},
-                    content:'<h4>Station Number: {{ i[0] }}</h4><h4>Address: {{ i[1] }}</h4>'
-    <!--                iconImage:''-->
-                });
-            {% endfor %}
-
-            function addMarkers(prop){
-                var marker = new google.maps.Marker({
-                    position : prop.coords,
-                    map : map
-                });
-
-    <!--if clause to find availability to change icon colour here?-->
-
-    <!--add bike info windows-->
-
-            if(prop.content){
-                var infoWindow = new google.maps.InfoWindow({
-                    content : prop.content
-                });
-
-            }
-
-            marker.addListener('click', function(){
-                    infoWindow.open(map, marker);
-                });
-
-            }
-
-        }
-        function buildURL(){
-            var origin = document.getElementById('from').value.split(',');
-            var dest = document.getElementById('to').value.split(',');
-            var url = "/index/route?tolat="+dest[0]+"&tolong="+dest[1];
-            url += "&fromlat="+origin[0]+"&fromlong="+origin[1];
-            window.location = url;
-        }
+        
+        
     </script>
     <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5ydZwuT-hJt9fmBA5_sHnIWeE3JgvjCY&callback=initMap"  async defer ></script>
 </body>
