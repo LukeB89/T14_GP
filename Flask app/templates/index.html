@@ -21,7 +21,14 @@
         stands.push({lat:{{ i[-2] }},
         lng:{{ i[-1] }},
         address:"{{ i[1] }}",
-        number:{{ i[0] }}});
+        number:{{ i[0] }},
+        status:"{{ i[2] }}",
+        free_bikes:{{ i[4] }},
+        free_stands:{{ i[3] }},
+        weather_img:"{{ i[6] }}",
+        weather_type:"{{ i[5] }}",
+        temp:{{ i[7] }},
+        feels_like:{{ i[8] }}});
     {% endfor %}
     function load(){
         var from = document.getElementById("from");
@@ -48,7 +55,7 @@
 
             addMarkers({
             coords:{lat:i.lat,lng:i.lng},
-            content:'<h4>Station Number: '+i.number+'</h4><h4>Address: '+i.address+'</h4>'
+            content:'<h4>Station Number: '+i.number+'</h4><h4>Address: '+i.address+'</h4><h4>Status: '+i.status+'</h4><h4>Available Stands: '+i.free_stands+'</h4><h4>Available Bikes: '+i.free_bikes+'</h4><h4>Temperature: '+i.temp+'</h4><h4>Feels Like: '+i.feels_like+'</h4><img src="http://openweathermap.org/img/wn/'+i.weather_img+'@2x.png" alt="'+i.weather_type+'">'
             <!--iconImage:''-->
             });
         }
