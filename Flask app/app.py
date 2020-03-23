@@ -33,6 +33,7 @@ def index_page():
             s.lat, s.lng 
         from static_data s, bikes_current b, weather_current w, bike_weather_assoc a
         where s.number = b.number and b.number = a.bike_station_id and a.weather_station = w.name
+        order by s.address asc
         """)
     return render_template('index.html', title='Map', statinfo=statinfo)
 
