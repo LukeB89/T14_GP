@@ -27,8 +27,8 @@
         free_stands:{{ i[3] }},
         weather_img:"{{ i[6] }}",
         weather_type:"{{ i[5] }}",
-        temp:{{ i[7] }},
-        feels_like:{{ i[8] }}});
+        temp:{{ '%.2f'%(i[7] - 273.15) }},
+        feels_like:{{ '%.2f'%(i[8] - 273.15) }}});
     {% endfor %}
     function load(){
         var from = document.getElementById("from");
