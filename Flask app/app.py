@@ -13,7 +13,7 @@ config = ConfigParser()
 config.read("config.ini")
 options = config["DataBase"]
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 engine = create_engine("mysql://" + options["user"] + ":" + options["passwd"] + "@"
                        + options["host"] + "/" + options["database"])
