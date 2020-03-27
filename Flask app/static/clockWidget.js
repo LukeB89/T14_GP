@@ -25,7 +25,7 @@ function updateClock() {
     document.getElementById("clock-time").innerText = hour + ":" + min;
 }
 
-function updateWeather() {
+function updateWeather(gifsPath) {
     fetch( host + "get_weather_dublin", {mode: "cors", method: "GET",})
         .then(response => response.json())
         //.then(body => console.log(body))
@@ -37,7 +37,7 @@ function updateWeather() {
                 document.getElementById("clock-weatherImg").alt = weatherInfo.weather_main + "image failed to load";
                 document.getElementById("clock-temp").innerText = Number((weatherInfo.main_temp - 273.15).toFixed(2)) + " C\xB0";
 
-                //updateWeatherGif();
+                updateWeatherGif(gifsPath);
             })
         .catch(
             function(error) {
@@ -45,27 +45,30 @@ function updateWeather() {
         });
 }
 
-function updateWeatherGif() {
-    var weatherGif = document.getElementById("clockWidget").style.backgroundImage;
-    var currentWeather = document.getElementById("clock-weatherDescription").innerText;
-    if (weatherGif != backgroundImages[currentWeather]) {
-        weatherGif = backgroundImages[currentWeather];
+function updateWeatherGif(gifsPath) {
+    var clock = document.getElementById("clockWidget");
+    var weather = document.getElementById("clock-weatherDescription").innerText;
+
+    if (clock.style.backgroundImage.src !== (host + gifsPath + backgroundImages[weather])) {
+        var url = host + gifsPath + backgroundImages[weather];
+        clock.setAttribute("style", "background-image: url("+ url +");");
+    } else {
     }
 }
 
 //create a dict object to match weather types to background image urls
 var backgroundImages = new Object;
-backgroundImages["Thunderstorm"] = gifsPath + "default_weather.gif";
-backgroundImages["Drizzle"] = gifsPath + "default_weather.gif";
-backgroundImages["Snow"] = gifsPath + "default_weather.gif";
-backgroundImages["Mist"] = gifsPath + "default_weather.gif";
-backgroundImages["Smoke"] = gifsPath + "default_weather.gif";
-backgroundImages["Haze"] = gifsPath + "default_weather.gif";
-backgroundImages["Dust"] = gifsPath + "default_weather.gif";
-backgroundImages["Fog"] = gifsPath + "default_weather.gif";
-backgroundImages["Sand"] = gifsPath + "default_weather.gif";
-backgroundImages["Ash"] = gifsPath + "default_weather.gif";
-backgroundImages["Squall"] = gifsPath + "default_weather.gif";
-backgroundImages["Tornado"] = gifsPath + "default_weather.gif";
-backgroundImages["Clear"] = gifsPath + "default_weather.gif";
-backgroundImages["Clouds"] = gifsPath + "default_weather.gif";
+backgroundImages["Thunderstorm"] = "default_weather.gif";
+backgroundImages["Drizzle"] = "default_weather.gif";
+backgroundImages["Snow"] = "default_weather.gif";
+backgroundImages["Mist"] = "default_weather.gif";
+backgroundImages["Smoke"] = "default_weather.gif";
+backgroundImages["Haze"] = "default_weather.gif";
+backgroundImages["Dust"] = "default_weather.gif";
+backgroundImages["Fog"] = "default_weather.gif";
+backgroundImages["Sand"] = "default_weather.gif";
+backgroundImages["Ash"] = "default_weather.gif";
+backgroundImages["Squall"] = "default_weather.gif";
+backgroundImages["Tornado"] = "default_weather.gif";
+backgroundImages["Clear"] = "default_weather.gif";
+backgroundImages["Clouds"] = "clouds1.gif";
