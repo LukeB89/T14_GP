@@ -13,7 +13,7 @@ config = ConfigParser()
 config.read("config.ini")
 options = config["DataBase"]
 
-app = Flask(__name__)
+app = Flask(__name__, static_url_path='/static')
 
 engine = create_engine("mysql://" + options["user"] + ":" + options["passwd"] + "@"
                        + options["host"] + "/" + options["database"])
@@ -72,6 +72,22 @@ def bikemap():
 def routemap():
     statinfo = engine.execute('select number, address, lat, lng from static_data')
     return render_template('route.html', title='Route', statinfo=statinfo)
+
+
+@app.route("/get_weather_dublin")
+def get_weather_dublin():
+    """Allows client side to get up-to-date weather Info for dublin"""
+    dublin_weather = engine.execute("""
+        select w.main_temp, w.main_feels_like, w.weather_main, w.weather_icon
+        from weather_current w
+        where w.name = "Dublin"
+        """)
+
+    for row in dublin_weather:
+        response = jsonify(dict(row))
+        response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 
 # allows us to run directly with python i.e. don't have to set env variables each time
