@@ -126,12 +126,52 @@
                     <div class="contianer w-100">
                         <div class="row">
                             <div class="col-7 col-md-8 col-xl-9" style="background-color: aqua">
-                                <div class="contianer w-100" id="map">
+                                <div class="container w-100" id="map">
                                     <h1>Map here</h1>
                                 </div>
                             </div>
                             <div class="col-5 col-md-4 col-xl-3" style="background-color: maroon">
                                 <div class="container w-100">
+
+                                    <!-- clock widget goes here -->
+                                    <div class="row">
+                                        <div class="container w-100" id="clockWidget" style="background-image: url('/static/weather_gifs/default_weather.gif');">
+                                            <script src="/static/clockWidget.js" ></script>
+                                            <div class="row">
+                                                <span id="clock-date"></span>
+                                            </div>
+
+                                            <div class="row">
+                                                <span id="clock-time"></span>
+                                            </div>
+
+                                            <div class="row">
+                                                <img id="clock-weatherImg">
+                                            </div>
+
+                                            <div class="row">
+                                                <span id="clock-temp"></span>
+                                            </div>
+
+                                            <div class="row">
+                                                <span id="clock-weatherDescription"></span>
+                                            </div>
+
+                                            <script>
+                                                // directory where weather gifs are stored
+                                                var gifsPath = "{{ url_for('static', filename='weather_gifs/') }}";
+                                                console.log(gifsPath);
+                                                //call updateClock() every 1000 milliseconds
+                                                updateClock();
+                                                setInterval(updateClock, 1000);
+
+                                                //call updateWeather() every 30000 milliseconds
+                                                updateWeather();
+                                                setInterval(updateWeather, 30000);
+                                            </script>
+                                        </div>
+                                    </div>
+
                                     <div class="row">
                                         <div class="col-2"><strong>From: </strong></div>
                                         <div class="col-5"><select id="from"></select></div>
@@ -149,6 +189,8 @@
                             </div>
                         </div>
                     </div>
+
+
                 </div>
             </main>
         </div>
