@@ -16,7 +16,73 @@
     <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='main.css') }}">
 </head>
 
-<body>
+<script type="text/javascript">
+    var stands = [];
+    var info_rows = {number:"Station ID:", address:"Station Address:", free_bikes:"Bikes Available",
+                     free_stands:"Empty Stands:", lat:"Station Latitude:", lng:"Station Longitude:", banking:"Payment Terminal:", bonus:"Bonus Station:"}
+    var isEmpty = true;
+    var main_div, head, row, info_name, info_value, container;
+    {% if statinfo == "none" %}
+        isEmpty = true;
+    {% else %}
+        isEmpty = false;
+        {% for i in statinfo %}
+        stands.push({lat:{{ i[-2] }},
+                    lng:{{ i[-1] }},
+                    address:"{{ i[1] }}",
+                    number:{{ i[0] }},
+                    status:"{{ i[2] }}",
+                    free_bikes:{{ i[4] }},
+                    free_stands:{{ i[3] }},
+                    weather_img:"{{ i[6] }}",
+                    weather_type:"{{ i[5] }}",
+                    temp:{{ '%.2f'%(i[7] - 273.15) }},
+                    feels_like:{{ '%.2f'%(i[8] - 273.15) }},
+                    banking:"{{ i[10] }}",
+                    bonus:"{{ i[11] }}"});
+        {% endfor %}
+    {% endif %}
+    
+    console.log(stands)
+    
+    
+    function load(){
+        main_div = document.getElementById("station_info");
+        if (isEmpty){
+            head = document.createElement("H1");
+            head.innerHTML = "<strong>Station Information</strong>";
+            main_div.appendChild(head);
+        } else {
+            head = document.createElement("H1");
+            head.innerHTML = "<strong>Station Information</strong>";
+            main_div.appendChild(head);
+            
+            container = document.createElement("DIV");
+            container.setAttribute("class","container w-100");
+            container.setAttribute("style", "background-color: brown");
+            for(var key in info_rows){
+                
+                row = document.createElement("DIV");
+                row.setAttribute("class","row");
+                info_name = document.createElement("DIV");
+                info_name.setAttribute("class","col-5 col-sm-3 col-md-3 col-lg-4 col-xl-5");
+                info_name.innerHTML = "<h5><strong>"+info_rows[key]+"</strong></h5>";
+                row.appendChild(info_name);
+                info_value = document.createElement("DIV");
+                info_value.setAttribute("class","col-5 col-sm-4 col-md-4 col-lg-4 col-xl-5 ml-auto");
+                info_value.innerHTML = "<h5><strong>"+stands[0][key]+"</strong></h5>"
+                row.appendChild(info_value);
+                container.appendChild(row);
+            }
+            main_div.appendChild(container);
+            
+            
+        }
+    }
+    
+    
+</script>
+<body onload="load()">
     <nav class="navbar navbar-expand-lg navbar-light navbar-right" style="background-color: #e3f2fd;">
         <a class="navbar-brand" href="#">
             <h1><strong>Dublin Bikes</strong></h1>
@@ -56,8 +122,9 @@
 
             <main class="col-12 col-md-10 col-xl-10 ml-auto maindiv" role="main" style="background-color: #ff1111;">
                 <div class="row">
-                    <div class="col-6 col-md-5 col-xl-5" style="background-color: aqua">
+                    <div class="col-6 col-md-5 col-xl-5" style="background-color: aqua" id=station_info>
                         <!--put in station information related Items here-->
+<!--
                         {% if stat_info == "none" %}
                         <h2 style="font-size: 1em"> Station Information </h2>
                         {% else %}
@@ -152,6 +219,7 @@
                         </div>
                         {% endfor%}
                         {% endif %}
+-->
 
                     </div>
                     <div class="col-6 col-md-7 col-xl-7 ml-auto" style="background-color: aqua">

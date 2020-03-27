@@ -67,6 +67,26 @@
         </div>
     </nav>
     <script type="text/javascript">
+        var stands = [];
+        var org = {{coordinates.origin}};
+        var dst = {{coordinates.dest}};
+        {% for i in statinfo %}
+        stands.push({lat:{{ i[-2] }},
+                    lng:{{ i[-1] }},
+                    address:"{{ i[1] }}",
+                    number:{{ i[0] }},
+                    status:"{{ i[2] }}",
+                    free_bikes:{{ i[4] }},
+                    free_stands:{{ i[3] }},
+                    weather_img:"{{ i[6] }}",
+                    weather_type:"{{ i[5] }}",
+                    temp:{{ '%.2f'%(i[7] - 273.15) }},
+                    feels_like:{{ '%.2f'%(i[8] - 273.15) }},
+                    banking:"{{ i[10] }}",
+                    bonus:"{{ i[11] }}"});
+        {% endfor %}
+        
+        
         function initMap() {
 
             radius = 20, zoom = 14;
@@ -80,14 +100,34 @@
                 center : location
             });
 
+            
+            
+            <!--add markers-->
+            var lngT = 0.005;
+            var latT = 0.003;
+            for (let i of stands) {
+
+                if((i.lat < (org[0]+latT) && i.lat > (org[0]-latT) && i.lng < (org[1]+lngT) && i.lng > (org[1]-lngT)) || (i.lat < (dst[0]+latT) && i.lat > (dst[0]-latT) && i.lng < (dst[1]+lngT) && i.lng > (dst[1]-lngT))) {
+                    if((i.lat == org[0] && i.lng == org[1]) || (i.lat == dst[0] && i.lng == dst[1])){
+                        continue;
+                    }
+                    
+                    addMarkers({
+                        coords:{lat:i.lat,lng:i.lng},
+                        content:'<h4>Station Number: '+i.number+'</h4><h4>Address: '+i.address+'</h4><h4>Status: '+i.status+'</h4><h4>Available Stands: '+i.free_stands+'</h4><h4>Available Bikes: '+i.free_bikes+'</h4><h4>Temperature: '+i.temp+'</h4><h4>Feels Like: '+i.feels_like+'</h4><img src="http://openweathermap.org/img/wn/'+i.weather_img+'@2x.png" alt="'+i.weather_type+'">'
+                        <!--iconImage:''-->
+                        });
+                   }
+            }
+            
             directionsDisplay.setMap(map);
 
             calcAndDisplayRoute(directionsService, directionsDisplay);
-
+            
             function calcAndDisplayRoute(directionsService, directionsDisplay) {
                 directionsService.route({
-                    origin: String({{coordinates.origin}}),
-                    destination: String({{coordinates.dest}}),
+                    origin: String(org),
+                    destination: String(dst),
                     travelMode: 'BICYCLING'
                     }, function (response, status) {
                         if (status === 'OK') {
@@ -96,6 +136,29 @@
                             window.alert('Directions request failed due to ' + status);
                         }
                     });
+            }
+            
+            function addMarkers(prop){
+            var marker = new google.maps.Marker({
+                position : prop.coords,
+                map : map
+            });
+
+            <!--if clause to find availability to change icon colour here?-->
+
+            <!--add bike info windows-->
+
+            if(prop.content){
+                var infoWindow = new google.maps.InfoWindow({
+                content : prop.content
+                });
+
+            }
+
+            marker.addListener('click', function(){
+                infoWindow.open(map, marker);
+            });
+
             }
         }
     </script>
