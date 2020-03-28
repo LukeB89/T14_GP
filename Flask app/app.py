@@ -90,6 +90,18 @@ def get_weather_dublin():
     return response
 
 
+@app.route("/get_station_current")
+def get_station_current():
+    """Allows client side to request current dynamic data associate with a given bike station ID"""
+    station_id = request.args.get("id")
+    station_weather = engine.execute(bulk_data + "and s.number = " + station_id)
+    for row in station_weather:
+        response = jsonify(dict(row))
+        response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
+
+
 # allows us to run directly with python i.e. don't have to set env variables each time
 if __name__ == '__main__':
     app.run(debug=True)
