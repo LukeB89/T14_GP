@@ -21,3 +21,18 @@ h1 {
 #map {
     height: 49rem;
 }
+
+#clockWidget {
+    background-repeat: no-repeat;
+    background-size: cover;
+    text-align: center;
+}
+
+#clockWidget .row {
+    display: block;
+    width: 100%;
+}
+
+#clock-weatherImg {
+    width: 50%;
+}
