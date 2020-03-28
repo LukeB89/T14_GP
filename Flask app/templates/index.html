@@ -136,15 +136,17 @@
                                 <div class="container w-100">
 
                                     <!-- clock widget goes here -->
-                                    <div class="row">
-                                        <div class="container w-100" id="clockWidget">
+                                    <div class="row" id="clockWidget">
+                                        <div class="container w-100" style="background: rgba(255,255,255,0.3);" >
                                             <script src="/static/clockWidget.js" ></script>
                                             <div class="row">
-                                                <span id="clock-date"></span>
+                                                <span class="display-4">
+                                                    <small id="clock-date"></small>
+                                                </span>
                                             </div>
 
                                             <div class="row">
-                                                <span id="clock-time"></span>
+                                                <span class="display-1" id="clock-time"></span>
                                             </div>
 
                                             <div class="row">
@@ -152,11 +154,13 @@
                                             </div>
 
                                             <div class="row">
-                                                <span id="clock-temp"></span>
+                                                <span class="display-3" id="clock-temp"></span>
                                             </div>
 
                                             <div class="row">
-                                                <span id="clock-weatherDescription"></span>
+                                                <span class="display-4">
+                                                    <small  id="clock-weatherDescription"></small>
+                                                </span>
                                             </div>
 
                                             <script>
