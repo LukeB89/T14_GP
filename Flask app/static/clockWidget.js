@@ -52,6 +52,7 @@ function updateWeatherGif(gifsPath) {
     if (clock.style.backgroundImage.src !== (host + gifsPath + backgroundImages[weather])) {
         var url = host + gifsPath + backgroundImages[weather];
         clock.setAttribute("style", "background-image: url("+ url +");");
+        clock.setAttribute("alt", weather);
     } else {
     }
 }
