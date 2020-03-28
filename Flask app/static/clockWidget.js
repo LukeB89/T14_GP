@@ -59,8 +59,8 @@ function updateWeatherGif(gifsPath) {
 
 //create a dict object to match weather types to background image urls
 var backgroundImages = new Object;
-backgroundImages["Thunderstorm"] = "default_weather.gif";
-backgroundImages["Drizzle"] = "default_weather.gif";
+backgroundImages["Thunderstorm"] = "thunder1.gif";
+backgroundImages["Drizzle"] = "drizzle1.gif";
 backgroundImages["Snow"] = "default_weather.gif";
 backgroundImages["Mist"] = "default_weather.gif";
 backgroundImages["Smoke"] = "default_weather.gif";
@@ -71,5 +71,6 @@ backgroundImages["Sand"] = "default_weather.gif";
 backgroundImages["Ash"] = "default_weather.gif";
 backgroundImages["Squall"] = "default_weather.gif";
 backgroundImages["Tornado"] = "default_weather.gif";
-backgroundImages["Clear"] = "default_weather.gif";
+backgroundImages["Clear"] = "clear1.gif";
 backgroundImages["Clouds"] = "clouds1.gif";
+backgroundImages["Rain"] = "rain2.gif";
