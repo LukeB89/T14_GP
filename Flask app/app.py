@@ -83,7 +83,7 @@ def get_weather_dublin():
         response = jsonify(dict(row))
         response.headers.add('Access-Control-Allow-Origin', '*')
 
-    return response
+        return response
 
 
 @app.route("/get_station_current")
@@ -95,6 +95,28 @@ def get_station_current():
         response = jsonify(dict(row))
         response.headers.add('Access-Control-Allow-Origin', '*')
 
+        return response
+
+
+@app.route("/get_station_prediction")
+def get_station_prediction():
+    """Placeholder function:
+     Defines behavior when clients request station/bike usage predictive data for a given station id"""
+    station_id = request.args.get("id")
+
+    # something happens here to get / generate the prediction data
+
+    # defines a dummy dataset to return for testing the graph generation
+    # this is the format in which data should be returned
+    data = {
+        "labels": ["05.00", "06.00", "07.00", "08.00", "09.00", "10.00", "11.00",
+                   "12.00", "13.00", "14.00", "15.00", "16.00", "17.00", "18.00",
+                   "19.00", "20.00", "21.00", "22.00", "23.00", "24.00"],
+        "dataSeries": [[15, 34, 45, 56, 67, 45, 1, 34, 78, 5, 15, 34, 45, 56, 67, 45, 1, 34, 78, 5],
+                       [75, 56, 45, 34, 23, 45, 89, 56, 12, 85, 75, 56, 45, 34, 23, 45, 89, 56, 12, 85]],
+        "seriesLabels": ["Free Stands", "FreeBikes"]
+    }
+    response = jsonify(data)
     return response
 
 

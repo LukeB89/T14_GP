@@ -1,4 +1,5 @@
-// get the chart container from the info.html page
+//define ip address of flask server - placeholder
+var host = "http://127.0.0.1:5000/";
 
 var times = ["05.00", "06.00", "07.00","08.00", "09.00", "10.00", "11.00", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00", "18.00", "19.00", "20.00", "21.00", "22.00", "23.00", "24.00"];
 var freeStands = [15, 34, 45, 56, 67, 45 , 1, 34, 78, 5, 15, 34, 45, 56, 67, 45 , 1 ,34, 78, 5];
@@ -58,4 +59,46 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
     });
 }
 
-createChart("bikesByDay", times, [freeStands, freeBikes], ["Free Stands", "Free Bikes"], borderColours, fillColours)
+function getChartData(stationId) {
+    // request prediction data for the passed station ID for generating graphs
+
+    fetch( host + "get_station_prediction?id=" + stationId, {mode: "cors", method: "GET",})
+        .then(response => response.json())
+        //.then(body => console.log(body))
+        .then(
+            function(body) {
+                createChart("bikesByDay", body.labels, body.dataSeries, body.seriesLabels, borderColours, fillColours);
+            })
+        .catch(
+            function(error) {
+                console.log('Request failed', error);
+        });
+}
+
+getChartData(25);
+
+//createChart("bikesByDay", times, [freeStands, freeBikes], ["Free Stands", "Free Bikes"], borderColours, fillColours)
+
+/*
+var originalDraw = Chart.controllers.line.prototype.draw;
+Chart.controllers.line.prototype.draw = function (ease) {
+    originalDraw.call(this, ease);
+
+    var point = dataValues[vm.incomeCentile];
+    var scale = this.chart.scales['x-axis-0'];
+
+    // calculate the portion of the axis and multiply by total axis width
+    var left = (point.x / scale.end * (scale.right - scale.left));
+
+    // draw line
+    this.chart.chart.ctx.beginPath();
+    this.chart.chart.ctx.strokeStyle = '#ff0000';
+    this.chart.chart.ctx.moveTo(scale.left + left, 0);
+    this.chart.chart.ctx.lineTo(scale.left + left, 1000000);
+    this.chart.chart.ctx.stroke();
+
+    // write label
+    this.chart.chart.ctx.textAlign = 'center';
+    this.chart.chart.ctx.fillText('YOU', scale.left + left, 200);
+};
+*/
