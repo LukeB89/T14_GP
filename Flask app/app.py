@@ -103,7 +103,7 @@ def get_station_current():
 
 
 @app.route("/get_station_prediction")
-def get_station_current():
+def get_station_prediction():
     """Placeholder function:
      Defines behavior when clients request station/bike usage predictive data for a given station id"""
     station_id = request.args.get("id")
