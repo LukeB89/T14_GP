@@ -42,18 +42,24 @@
 
     <!--add markers-->
 
+            var markerImage = '/static/pin_green.png';
+
             {% for i in statinfo %}
                 addMarkers({
                     coords:{lat:{{ i[-2] }},lng:{{ i[-1] }}},
                     content:'<h4>Station Number: {{ i[0] }}</h4><h4>Address: {{ i[1] }}</h4>'
-    <!--                iconImage:''-->
                 });
+            {% endfor %}
+
+            {% for j in bikenos %}
+
             {% endfor %}
 
             function addMarkers(prop){
                 var marker = new google.maps.Marker({
                     position : prop.coords,
-                    map : map
+                    map : map,
+                    icon: markerImage
                 });
 
     <!--if clause to find availability to change icon colour here?-->

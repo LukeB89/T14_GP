@@ -29,11 +29,6 @@ bulk_data = """
 station_data = "select s.number, s.address from static_data s"
 ordered = " order by s.address asc"
 
-# @app.route("/test")
-# def dub_bikes():
-#     l1 = engine.execute('select name from static_data')  #
-#     return render_template('home.html', l1=l1)  # pulls home.html template from templates folder
-#  
 @app.route("/index")
 def index_page():
     # request co-ordinates, name, number & dynamic bikes/weather data from DataBase for each bike station
@@ -65,7 +60,8 @@ def info_page_refined(stat_id):
 @app.route("/")
 def bikemap():
     statinfo = engine.execute('select number, address, lat, lng from static_data')
-    return render_template('map.html', title='Map', statinfo=statinfo)
+    bikenos = engine.execute('select number, available_bikes from bikes_current')
+    return render_template('map.html', title='Map', statinfo=statinfo, bikenos=bikenos)
 
 
 @app.route("/route")

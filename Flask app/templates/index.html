@@ -57,9 +57,10 @@
 
             addMarkers({
             coords:{lat:i.lat,lng:i.lng},
-            content:'<h4>Station Number: '+i.number+'</h4><h4>Address: '+i.address+'</h4><h4>Status: '+i.status+'</h4><h4>Available Stands: '+i.free_stands+'</h4><h4>Available Bikes: '+i.free_bikes+'</h4><h4>Temperature: '+i.temp+'</h4><h4>Feels Like: '+i.feels_like+'</h4><img src="http://openweathermap.org/img/wn/'+i.weather_img+'@2x.png" alt="'+i.weather_type+'">'
-            <!--iconImage:''-->
+            content:'<h4>Station Number: '+i.number+'</h4><h4>Address: '+i.address+'</h4><h4>Status: '+i.status+'</h4><h4>Available Stands: '+i.free_stands+'</h4><h4>Available Bikes: '+i.free_bikes+'</h4><h4>Temperature: '+i.temp+'</h4><h4>Feels Like: '+i.feels_like+'</h4><img src="http://openweathermap.org/img/wn/'+i.weather_img+'@2x.png" alt="'+i.weather_type+'">',
+            pin: i.free_bikes
             });
+
         }
 
         function addMarkers(prop){
@@ -68,14 +69,20 @@
                 map : map
             });
 
-            <!--if clause to find availability to change icon colour here?-->
-
             <!--add bike info windows-->
 
             if(prop.content){
                 var infoWindow = new google.maps.InfoWindow({
                 content : prop.content
                 });
+
+            if (prop.pin >= 13){
+                    marker.setIcon('/static/pin_green.png')
+                } else if (prop.pin < 13 && prop.pin > 5) {
+                    marker.setIcon('/static/pin_amber.png')
+                } else if (prop.pin <= 5) {
+                    marker.setIcon('/static/pin_red.png')
+                }
 
             }
 
@@ -97,9 +104,9 @@
 
 <body onload="load()">
 
-    <nav class="navbar navbar-expand-lg navbar-light navbar-right" style="background-color: #e3f2fd;">
+    <nav class="navbar navbar-expand-lg navbar-light navbar-right" style="background-color: rgba(8, 76, 85, 1);">
         <a class="navbar-brand" href="#">
-            <h1><strong>Dublin Bikes</strong></h1>
+            <h1><strong>dublinbikes</strong></h1>
         </a>
         <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
             <span class="navbar-toggler-icon"></span>
@@ -201,7 +208,7 @@
         </div>
     </div>
 
-    <nav class="navbar fixed-bottom navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+    <nav class="navbar fixed-bottom navbar-expand-lg navbar-light" id="bottomnav" style="background-color: #e3f2fd;">
         <div class="container">
             <div class="row w-100">
                 <div class="col">
