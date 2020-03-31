@@ -226,6 +226,8 @@
                         <div class="row" style="background-color: white">
                             <!--put in bike trend related information here-->
                             <h2> Bikes Trend </h2>
+                            <div class="col-2"><strong>Select Day: </strong></div>
+                            <div class="col-5"><select id="weekDays"></select></div>
                             <script src="{{ url_for('static', filename='/jsModules/chart.js/dist/Chart.js') }}"></script>
                             <canvas id="bikesByDay" width="100%" height="25%"></canvas>
                             <script src="{{ url_for('static', filename='chartWidget.js') }}" ></script>
