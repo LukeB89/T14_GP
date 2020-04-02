@@ -104,24 +104,99 @@ def get_station_current():
 
 @app.route("/get_station_prediction")
 def get_station_prediction():
-    """Placeholder function:
-     Defines behavior when clients request station/bike usage predictive data for a given station id"""
+    """Defines behavior when clients request station/bike usage predictive data for a given station id"""
+
+    # response json format
+    # chart names should correspond to the container element ids'used in info.html
+    """
+        stationIdData:{[
+            bikesByHour: {
+                dataSets: {
+                    Monday: [seriesData], 
+                    Tuesday: [seriesData],
+                    ...
+                },
+                xAxisLabels: ["05:00", "07:00", "09:00"... ]
+                seriesLabels: ["Free Bikes", "Free Stands"]
+            },
+            bikesByWeekday: {
+                dataSets: {
+                    week: [seriesData]
+                },
+                xAxisLabels: ["Sunday", "Monday", "Tuesday"... ]
+                seriesLabels: ["Station Usage"]
+            }
+        ]}
+    """
+
     station_id = request.args.get("id")
+    # get the daily trend from the database
 
-    # something happens here to get / generate the prediction data
+    prediction_by_day = engine.execute("""
+                select *
+                from  station_week_prediction p
+                where p.number = %s
+                """ % station_id)
 
-    # defines a dummy dataset to return for testing the graph generation
-    # this is the format in which data should be returned
-    data = {
-        "labels": ["05.00", "06.00", "07.00", "08.00", "09.00", "10.00", "11.00",
-                   "12.00", "13.00", "14.00", "15.00", "16.00", "17.00", "18.00",
-                   "19.00", "20.00", "21.00", "22.00", "23.00", "24.00"],
-        "dataSeries": [[15, 34, 45, 56, 67, 45, 1, 34, 78, 5, 15, 34, 45, 56, 67, 45, 1, 34, 78, 5],
-                       [75, 56, 45, 34, 23, 45, 89, 56, 12, 85, 75, 56, 45, 34, 23, 45, 89, 56, 12, 85]],
-        "seriesLabels": ["Free Stands", "FreeBikes"]
+    # get the hourly trend from the database
+    prediction_by_hour = engine.execute("""
+                    select *
+                    from  station_day_prediction p
+                    where p.number = %s
+                    """ % station_id)
+
+    # get the total number of bike stands for this station
+    stands = engine.execute("""
+                    select bike_stands
+                    from  bikes_current c
+                    where c.number = %s
+                    """ % station_id)
+
+    # build the response json
+    response = {
+        "bikesByWeekday": {
+            "dataSets": {
+                "week": {}
+            },
+            "xAxisLabels": [],
+            "seriesLabels": []
+        },
+        "bikesByHour": {
+            "dataSets": {},
+            "xAxisLabels": [],
+            "seriesLabels": []
+        }
     }
-    response = jsonify(data)
-    return response
+
+    for row in stands:
+        stands = dict(row)
+    print(stands["bike_stands"])
+
+    for row in prediction_by_day:
+        temp = dict(row)
+        temp.pop("number")
+        response["bikesByWeekday"]["dataSets"]["week"] = temp
+        response["bikesByWeekday"]["xAxisLabels"] = list(temp.keys())
+        response["bikesByWeekday"]["seriesLabels"].append("Station Usage")
+
+    for row in prediction_by_hour:
+        temp = dict(row)
+        temp.pop("number")
+        day = temp.pop("day")
+        response["bikesByHour"]["dataSets"][day] = ["bikes", "stands"]
+        response["bikesByHour"]["dataSets"][day][0] = temp
+        response["bikesByHour"]["xAxisLabels"] = list(temp.keys())
+
+    response["bikesByHour"]["seriesLabels"] = ["Free Bikes", "Free Stands"]
+
+    for day in response["bikesByHour"]["dataSets"]:
+        series = response["bikesByHour"]["dataSets"][day]
+
+        series[1] = {}
+        for key in list(series[0].keys()):
+            series[1][key] = abs(series[0][key] - stands["bike_stands"])
+
+    return jsonify(response)
 
 
 # allows us to run directly with python i.e. don't have to set env variables each time
