@@ -7,6 +7,36 @@ var freeBikes = [75, 56, 45, 34, 23, 45, 89, 56, 12, 85, 75, 56, 45, 34, 23, 45,
 var borderColours = ["rgb(64, 204, 219)", "rgb(184, 202, 204)"];
 var fillColours = ["rgba(64, 204, 219, 0.8)", "rgba(184, 202, 204, 0.5)"];
 
+// an object for holding the predication data returned from the server for the currently selected stationId
+var stationPredictionData = {};
+
+/*
+// extend chart type "line" to include a vertical line denoting current hour/day/etc
+// source: https://stackoverflow.com/questions/30256695/chart-js-drawing-an-arbitrary-vertical-line
+var originalLineController = Chart.controllers.line;
+Chart.controllers.line = Chart.controllers.line.extend({
+    draw: function () {
+        originalLineController.prototype.draw.apply(this, arguments);
+
+        console.log(this);
+
+        var point = this._data[0][this.chart.options.lineAtIndex];
+        var scale = this.scale;
+
+        // draw line
+        this.chart.ctx.beginPath();
+        this.chart.ctx.moveTo(point.x, scale.startPoint + 24);
+        this.chart.ctx.strokeStyle = '#ff0000';
+        this.chart.ctx.lineTo(point.x, scale.endPoint);
+        this.chart.ctx.stroke();
+
+        // write TODAY
+        this.chart.ctx.textAlign = 'center';
+        this.chart.ctx.fillText("TODAY", point.x, scale.startPoint + 12);
+    }
+});
+*/
+
 function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fillColours) {
     // creates a chartJS stacked-line-graph with a categorical x-axis in the passed html <canvas id=[elemId]> element
     // elemId: specifies the element Id of the container for the chart
@@ -22,12 +52,20 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
         // formats the passed data as an object w/ instance variables to be passed
         // to the Chart() object constructor
         this.label = label;
-        this.data = data;
         this.fill = fill;
         this.backgroundColor = fillColor;
         this.borderColor = borderColor;
         this.lineTension = lineTension;
         this.pointRadius = 0;
+
+        var arr = new Array();
+
+
+        Object.keys(data).forEach( function(item) {
+            arr.push(data[item])
+        })
+
+        this.data = arr;
     }
 
     // get the chart container from the info.html page
@@ -38,6 +76,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
         var t = new DataSet(dataPoints[i], dataLabels[i], true, fillColours[i], borderColours[i], 0.1);
         lines.push(t);
     }
+    console.log(lines);
 
     new Chart(ctx, {
             type: "line",
@@ -54,7 +93,8 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
                 },
                 legend : {
                     position: "left"
-                }
+                },
+                lineAtIndex: 2
             }
     });
 }
@@ -67,38 +107,48 @@ function getChartData(stationId) {
         //.then(body => console.log(body))
         .then(
             function(body) {
-                createChart("bikesByDay", body.labels, body.dataSeries, body.seriesLabels, borderColours, fillColours);
+                stationPredictionData = body;
+                return true;
             })
         .catch(
             function(error) {
                 console.log('Request failed', error);
+                return false;
         });
 }
 
-getChartData(25);
 
-//createChart("bikesByDay", times, [freeStands, freeBikes], ["Free Stands", "Free Bikes"], borderColours, fillColours)
+function populateSelectOptions(dropdownId, chartName) {
+    // populates the dropdown selection box corresponding to the passed dropdownId
+    // with the values contained in chartName.chartKeys
+    var selectionList = document.getElementById(dropdownId);
+    options = Object.keys(stationPredictionData[chartName].dataSets);
+    for (let i of options) {
+        document.getElementById("bikesByHourBtns").innerHTML += '<button type="button" class="btn" onclick=changeHourlyGraph("' + i + '")>' + i + '</button>'
+        //selectionList.innerHTML += '<option value="' + i + '" onclick=changeHourlyGraph(' + i + ') >' + i + '</option>';
+    }
+}
 
-/*
-var originalDraw = Chart.controllers.line.prototype.draw;
-Chart.controllers.line.prototype.draw = function (ease) {
-    originalDraw.call(this, ease);
 
-    var point = dataValues[vm.incomeCentile];
-    var scale = this.chart.scales['x-axis-0'];
+async function chartMain(stationId) {
+    // this function is activated at an "onClick" event for one of the bike station links
 
-    // calculate the portion of the axis and multiply by total axis width
-    var left = (point.x / scale.end * (scale.right - scale.left));
+    // step 1: request prediction information for this bikes station
+    await getChartData(stationId);
 
-    // draw line
-    this.chart.chart.ctx.beginPath();
-    this.chart.chart.ctx.strokeStyle = '#ff0000';
-    this.chart.chart.ctx.moveTo(scale.left + left, 0);
-    this.chart.chart.ctx.lineTo(scale.left + left, 1000000);
-    this.chart.chart.ctx.stroke();
 
-    // write label
-    this.chart.chart.ctx.textAlign = 'center';
-    this.chart.chart.ctx.fillText('YOU', scale.left + left, 200);
-};
-*/
+    setTimeout(function() {
+        // step 2: populate drop-down selection boxes where charts have
+        // multiple dataSets (eg. 'bikesByHour')
+        populateSelectOptions("weekDays", "bikesByHour");
+
+        // step 3: draw charts (elemId, labels, dataPoints, dataLabels,  borderColours, fillColours)
+        createChart("bikesByHour", stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets.Mon, stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
+        createChart("bikesByWeekday", stationPredictionData.bikesByWeekday.xAxisLabels, stationPredictionData.bikesByWeekday.dataSets.week, stationPredictionData.bikesByWeekday.seriesLabels, borderColours, fillColours);
+    }, 500)
+}
+
+function changeHourlyGraph(day) {
+    document.getElementById("bikesByHour").innerHTML = "";
+    createChart("bikesByHour", stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets[day], stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
+}
