@@ -1,5 +1,9 @@
-h1 {
-    color: rgb(219, 216, 211);
+h1, h5 {
+    color: rgba(237, 237, 238, 1);
+}
+
+body {
+    background-colour: rgba(273, 273, 238, 1);
 }
 
 .sidebar {
@@ -18,13 +22,15 @@ h1 {
 }
 
 #map {
-    height: 49rem;
+    height: 39rem;
+    width: 100%;
 }
 
 #clockWidget {
     background-repeat: no-repeat;
     background-size: cover;
     text-align: center;
+    padding-left: none;
 }
 
 #clockWidget .row {
