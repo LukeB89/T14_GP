@@ -42,9 +42,9 @@ def bikesPredict(station):
         predicted_bikes_cov = covModel.predict(prediction_query)
         # update the table with the predictions
         noCov_insert = "INSERT INTO dublinbikes.station_day_prediction (number,day,covid,pred_h_{}) VALUES ({}, {}, {}, {});".format(hour,station,day,0,predicted_bikes_noCov[0])
-        noCov_update = "UPDATE dublinbikes.station_week_prediction SET pred_h_{} = {} WHERE (number = {}) AND (day = {}) AND (covid = {});".format(hour,predicted_bikes_noCov[0],station,day,0)
+        noCov_update = "UPDATE dublinbikes.station_day_prediction SET pred_h_{} = {} WHERE (number = {}) AND (day = {}) AND (covid = {});".format(hour,predicted_bikes_noCov[0],station,day,0)
         cov_insert = "INSERT INTO dublinbikes.station_day_prediction (number,day,covid,pred_h_{}) VALUES ({}, {}, {}, {});".format(hour,station,day,1,predicted_bikes_cov[0])
-        cov_update = "UPDATE dublinbikes.station_week_prediction SET pred_h_{} = {} WHERE (number = {}) AND (day = {}) AND (covid = {});".format(hour,predicted_bikes_cov[0],station,day,1)
+        cov_update = "UPDATE dublinbikes.station_day_prediction SET pred_h_{} = {} WHERE (number = {}) AND (day = {}) AND (covid = {});".format(hour,predicted_bikes_cov[0],station,day,1)
         try:
             conn.execute(noCov_insert)
         except:
