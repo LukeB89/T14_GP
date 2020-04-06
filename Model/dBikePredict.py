@@ -22,9 +22,9 @@ engine = create_engine("mysql://" + options["user"] + ":" + options["passwd"] + 
     
 def bikesPredict(station):
     # configure day and hour
-    date_now = datetime.now(tz=pytz.utc)
+    date_now = datetime.now()
     day = date_now.weekday()  
-    hour = date_now.hour
+    hour = date_now.hour+1
     day_bin = '{0:03b}'.format(day)
     hour_bin = '{0:05b}'.format(hour)
     # import the model to be used
