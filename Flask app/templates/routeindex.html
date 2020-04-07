@@ -89,6 +89,7 @@
         
         function initMap() {
 
+            var prev_iw = false;
             radius = 20, zoom = 14;
 
             var location = {lat: 53.3498, lng: -6.2603};
@@ -163,8 +164,27 @@
 
             }
 
-            marker.addListener('click', function(){
+            google.maps.event.addListener(marker, 'click', function() {
+                if (prev_iw) {
+                    prev_iw.close();
+                }
+                prev_iw = infoWindow;
                 infoWindow.open(map, marker);
+            });
+
+            google.maps.event.addListener(marker, 'click', function() {
+                if(!marker.open){
+                    infoWindow.open(map,marker);
+                    marker.open = true;
+                }
+                else{
+                    infoWindow.close();
+                    marker.open = false;
+                }
+                google.maps.event.addListener(map, 'click', function() {
+                    infoWindow.close();
+                    marker.open = false;
+                });
             });
 
             }

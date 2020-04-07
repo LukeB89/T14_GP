@@ -41,7 +41,9 @@
             }
     }
 
+
     function initMap() {
+        var prev_iw = false;
 
         radius = 20, zoom = 14;
 
@@ -69,6 +71,7 @@
                 map : map
             });
 
+
             <!--add bike info windows-->
 
             if(prop.content){
@@ -86,13 +89,35 @@
 
             }
 
-            marker.addListener('click', function(){
+
+
+            google.maps.event.addListener(marker, 'click', function() {
+                if (prev_iw) {
+                    prev_iw.close();
+                }
+                prev_iw = infoWindow;
                 infoWindow.open(map, marker);
             });
 
+            google.maps.event.addListener(marker, 'click', function() {
+                if(!marker.open){
+                    infoWindow.open(map,marker);
+                    marker.open = true;
+                }
+                else{
+                    infoWindow.close();
+                    marker.open = false;
+                }
+                google.maps.event.addListener(map, 'click', function() {
+                    infoWindow.close();
+                    marker.open = false;
+                });
+            });
         }
 
     }
+
+
     function buildURL(){
         var origin = document.getElementById('from').value.split(',');
         var dest = document.getElementById('to').value.split(',');
