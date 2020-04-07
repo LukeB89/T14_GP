@@ -72,7 +72,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
     var ctx = document.getElementById(elemId);
 
     lines = [];
-    for (var i = 0; i < dataPoints.length; i++) {
+    for (var i = 0; i < dataLabels.length; i++) {
         var t = new DataSet(dataPoints[i], dataLabels[i], true, fillColours[i], borderColours[i], 0.1);
         lines.push(t);
     }
@@ -99,7 +99,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
     });
 }
 
-function getChartData(stationId) {
+function getChartData(stationId, callback) {
     // request prediction data for the passed station ID for generating graphs
 
     fetch( host + "get_station_prediction?id=" + stationId, {mode: "cors", method: "GET",})
@@ -108,7 +108,8 @@ function getChartData(stationId) {
         .then(
             function(body) {
                 stationPredictionData = body;
-                return true;
+                console.log("Data received");
+                callback();
             })
         .catch(
             function(error) {
@@ -121,6 +122,7 @@ function getChartData(stationId) {
 function populateSelectOptions(dropdownId, chartName) {
     // populates the dropdown selection box corresponding to the passed dropdownId
     // with the values contained in chartName.chartKeys
+    console.log(chartName);
     var selectionList = document.getElementById(dropdownId);
     options = Object.keys(stationPredictionData[chartName].dataSets);
     for (let i of options) {
@@ -130,22 +132,22 @@ function populateSelectOptions(dropdownId, chartName) {
 }
 
 
-async function chartMain(stationId) {
+function chartMain() {
+
+    console.log("Building Charts");
     // this function is activated at an "onClick" event for one of the bike station links
 
     // step 1: request prediction information for this bikes station
-    await getChartData(stationId);
+
+    // step 2: populate drop-down selection boxes where charts have
+    // multiple dataSets (eg. 'bikesByHour')
+     populateSelectOptions("weekDays", "bikesByHour");
 
 
-    setTimeout(function() {
-        // step 2: populate drop-down selection boxes where charts have
-        // multiple dataSets (eg. 'bikesByHour')
-        populateSelectOptions("weekDays", "bikesByHour");
+    // step 3: draw charts (elemId, labels, dataPoints, dataLabels,  borderColours, fillColours)
+    createChart("bikesByHour", stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets['0'], stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
+    createChart("bikesByWeekday", stationPredictionData.bikesByWeekday.xAxisLabels, stationPredictionData.bikesByWeekday.dataSets.week, stationPredictionData.bikesByWeekday.seriesLabels, borderColours, fillColours);
 
-        // step 3: draw charts (elemId, labels, dataPoints, dataLabels,  borderColours, fillColours)
-        createChart("bikesByHour", stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets.Mon, stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
-        createChart("bikesByWeekday", stationPredictionData.bikesByWeekday.xAxisLabels, stationPredictionData.bikesByWeekday.dataSets.week, stationPredictionData.bikesByWeekday.seriesLabels, borderColours, fillColours);
-    }, 500)
 }
 
 function changeHourlyGraph(day) {
