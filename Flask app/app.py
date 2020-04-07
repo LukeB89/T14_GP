@@ -161,6 +161,11 @@ def get_station_prediction():
             "dataSets": {},
             "xAxisLabels": [],
             "seriesLabels": []
+        },
+        "bikesByHourCovid": {
+            "dataSets": {},
+            "xAxisLabels": [],
+            "seriesLabels": []
         }
     }
 
@@ -179,11 +184,25 @@ def get_station_prediction():
         temp = dict(row)
         temp.pop("number")
         day = temp.pop("day")
-        response["bikesByHour"]["dataSets"][day] = ["bikes", "stands"]
-        response["bikesByHour"]["dataSets"][day][0] = temp
-        response["bikesByHour"]["xAxisLabels"] = list(temp.keys())
+        covid = temp.pop("covid")
+
+        # rectify values where the predicted number of bikes is negative
+        for i in temp:
+            if temp[i] < 0:
+                temp[i] = 0
+
+        if covid:
+            response["bikesByHourCovid"]["dataSets"][day] = ["bikes", "stands"]
+            response["bikesByHourCovid"]["dataSets"][day][0] = temp
+            response["bikesByHourCovid"]["xAxisLabels"] = list(temp.keys())
+
+        else:
+            response["bikesByHour"]["dataSets"][day] = ["bikes", "stands"]
+            response["bikesByHour"]["dataSets"][day][0] = temp
+            response["bikesByHour"]["xAxisLabels"] = list(temp.keys())
 
     response["bikesByHour"]["seriesLabels"] = ["Free Bikes", "Free Stands"]
+    response["bikesByHourCovid"]["seriesLabels"] = ["Free Bikes", "Free Stands"]
 
     for day in response["bikesByHour"]["dataSets"]:
         series = response["bikesByHour"]["dataSets"][day]
