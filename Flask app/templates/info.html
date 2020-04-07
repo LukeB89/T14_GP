@@ -229,13 +229,13 @@
                         <!-- link js functions to request data & draw charts-->
                         <script src="{{ url_for('static', filename='chartWidget.js') }}" ></script>
 
-                        <div class="row" style="background-color: white">
+                        <div class="row" id="bikesByHourDiv" style="background-color: white">
                             <h2> Free Bikes & Stands by Hour</h2>
                             <div class="col-7" id="bikesByHourBtns"></div>
                             <canvas id="bikesByHour" width="100%" height="25%"></canvas>
 
                         </div>
-                        <div class="row" style="background-color: yellow">
+                        <div class="row" id="bikesByWeekdayDiv" style="background-color: yellow">
                             <h2> Station Traffic by Day </h2>
                             <canvas id="bikesByWeekday" width="100%" height="25%"></canvas>
                         </div>
