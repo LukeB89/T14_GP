@@ -132,12 +132,9 @@ def get_station_prediction():
         # split the string into a list using underscores as the delimiter & select the last index in the list
         n = hour.split("_")[-1]
 
-        print(n)
-
         # if n is only a single character; add a 0 to the front of n
         if len(n) == 1:
             n = "0" + n
-        print(n)
 
         return n + ":00"
 
