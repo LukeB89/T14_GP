@@ -77,10 +77,9 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
         var values = [];
         for (var l = 0; l <labels.length; l++) {
             thisLabel = labels[l]
-            values.push(dataPoints[i].thisLabel)
+            values.push(dataPoints[i][thisLabel]);
         }
-        console.log(values);
-        var t = new DataSet(dataPoints[i], dataLabels[i], true, fillColours[i], borderColours[i], 0.1);
+        var t = new DataSet(values, dataLabels[i], true, fillColours[i], borderColours[i], 0.1);
         lines.push(t);
     }
 
