@@ -192,7 +192,7 @@ def get_station_prediction():
         temp.pop("number")
         response["bikesByWeekday"]["dataSets"]["week"] = [temp]
         response["bikesByWeekday"]["seriesLabels"].append("Station Usage")
-    response["bikesByWeekday"]["xAxisLabels"] = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
+    response["bikesByWeekday"]["xAxisLabels"] = ["sun", "mon", "tue", "wed", "thur", "fri", "sat"]
 
     for row in prediction_by_hour:
         temp = dict(row)
