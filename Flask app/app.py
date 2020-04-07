@@ -192,7 +192,12 @@ def get_station_prediction():
         for key in list(series[0].keys()):
             series[1][key] = abs(series[0][key] - stands["bike_stands"])
 
-    return jsonify(response)
+        # convert response into json
+        response = jsonify(response)
+        # add CORs security header to response : required for compatibility
+        response.headers.add('Access-Control-Allow-Origin', '*')
+
+        return response
 
 
 # allows us to run directly with python i.e. don't have to set env variables each time
