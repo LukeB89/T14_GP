@@ -125,6 +125,22 @@ def get_station_prediction():
         ]}
     """
 
+    def convert_hours(hour):
+        """ utility function, converts an hour of the day entered in the string format 'pred_h_05' (as
+        recorded in the RDS database) into the 24 hour clock representation '05:00' """
+
+        # split the string into a list using underscores as the delimiter & select the last index in the list
+        n = hour.split("_")[-1]
+
+        print(n)
+
+        # if n is only a single character; add a 0 to the front of n
+        if len(n) == 1:
+            n = "0" + n
+        print(n)
+
+        return n + ":00"
+
     station_id = request.args.get("id")
     # get the daily trend from the database
 
@@ -148,7 +164,7 @@ def get_station_prediction():
                     where c.number = %s
                     """ % station_id)
 
-    # build the response json
+    # build the framework of the response json
     response = {
         "bikesByWeekday": {
             "dataSets": {
@@ -169,6 +185,7 @@ def get_station_prediction():
         }
     }
 
+    # populate the response json
     for row in stands:
         stands = dict(row)
     print(stands["bike_stands"])
@@ -185,6 +202,12 @@ def get_station_prediction():
         temp.pop("number")
         day = temp.pop("day")
         covid = temp.pop("covid")
+
+        # convert the names of the remaining keys/datafields into the 24-hour format
+        someDict = {}
+        for key in temp:
+            someDict[convert_hours(key)] = temp[key]
+        temp = someDict
 
         # rectify values where the predicted number of bikes is negative
         for i in temp:
@@ -211,12 +234,12 @@ def get_station_prediction():
         for key in list(series[0].keys()):
             series[1][key] = abs(series[0][key] - stands["bike_stands"])
 
-        # convert response into json
-        response = jsonify(response)
-        # add CORs security header to response : required for compatibility
-        response.headers.add('Access-Control-Allow-Origin', '*')
+    # convert response into json
+    response = jsonify(response)
+    # add CORs security header to response : required for compatibility
+    response.headers.add('Access-Control-Allow-Origin', '*')
 
-        return response
+    return response
 
 
 # allows us to run directly with python i.e. don't have to set env variables each time
