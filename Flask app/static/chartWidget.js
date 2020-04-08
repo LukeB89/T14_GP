@@ -109,7 +109,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
 function getChartData(stationId, callback) {
     // request prediction data for the passed station ID for generating graphs
 
-    fetch( host + "get_station_prediction?id=" + stationId, {mode: "cors", method: "GET",})
+    fetch( "get_station_prediction?id=" + stationId, {mode: "cors", method: "GET",})
         .then(response => response.json())
         //.then(body => console.log(body))
         .then(
