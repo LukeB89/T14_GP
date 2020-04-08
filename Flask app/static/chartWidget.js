@@ -1,6 +1,4 @@
-//define ip address of flask server - placeholder
-var host = "http://127.0.0.1:5000/";
-
+// define the colours to use when drawing & filling charts & graphs
 var borderColours = ["rgb(64, 204, 219)", "rgb(184, 202, 204)"];
 var fillColours = ["rgba(64, 204, 219, 0.8)", "rgba(184, 202, 204, 0.5)"];
 
@@ -110,7 +108,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
 function getChartData(stationId, callback) {
     // request prediction data for the passed station ID for generating graphs
 
-    fetch( "get_station_prediction?id=" + stationId, {mode: "cors", method: "GET",})
+    fetch("get_station_prediction?id=" + stationId, {mode: "cors", method: "GET",})
         .then(response => response.json())
         //.then(body => console.log(body))
         .then(
