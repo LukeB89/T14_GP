@@ -9,7 +9,7 @@
     {% endif %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-     <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='main2.css') }}">
+    <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='main2.css') }}">
 
 
     <!-- Placeholder styling for the sliding checkbox which switches between pre & post quarantine dataSets -->
@@ -99,176 +99,59 @@
 <body onload="load()">
     <div class="header">
         <a href="#default" class="logo">dublinbikes</a>
-        <div class="header-right">
-            <a href="index2">Map</a>
-            <a href="info">Info</a>
-        </div>
-    </div>
-
-
-    <div class="container-fluid">
-        <div class="row">
-            <div class="sidebar col-sm-2">
-                <nav class="nav flex-column">
-                    <ul class="nav flex-column nav_tabs">
-                        {% for station in stat_addr %}
-                        <li class="nav-item"><a class="nav-link" href="/info/{{station[0]}}">{{station[1]}}</a></li>
-                        {% endfor %}
-                    </ul>
-                </nav>
+            <div class="header-right">
+                <a href="index2">Map</a>
+                <a href="info">Info</a>
             </div>
+        </div>
 
-            <main class="col-12 col-md-10 col-xl-10 ml-auto maindiv" role="main" style="background-color: rgba(237, 237, 238, 1)">
-                <div class="row">
-                    <div class="col-6 col-md-5 col-xl-5" style="background-color: rgba(237, 237, 238, 1)" id=station_info>
-                        <!--put in station information related Items here-->
-<!--
-                        {% if stat_info == "none" %}
-                        <h2 style="font-size: 1em"> Station Information </h2>
-                        {% else %}
-                        {% for line in stat_info %}
-                        <h2><strong> Station Information </strong></h2>
-                        <div class="container w-100">
-                            <div class="row">
-                                <div class="col-5 col-sm-3 col-md-3 col-lg-4 col-xl-5">
-                                    <h4><strong>Station ID:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-lg-4 col-xl-5 ml-auto">
-                                    <h4 id="stationIdForCharts">{{line[0]}}</h4>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Station Name:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    <h4>{{line[2]}}</h4>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Station Address:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    <h4>{{line[3]}}</h4>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Station Latitude:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    <h4>{{line[4]}}</h4>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Station Longitude:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    <h4>{{line[5]}}</h4>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Payment Terminal:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    {% if line[6] == "TRUE" %}
-                                    <h4>Yes</h4>
-                                    {% else %}
-                                    <h4>No</h4>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Bonus Station:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    {% if line[7] == "TRUE" %}
-                                    <h4>Yes</h4>
-                                    {% else %}
-                                    <h4>No</h4>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                        </div>
-                        {% endfor%}
-                        {% endif %}
--->
 
-                    </div>
-                    <div class="col-6 col-md-7 col-xl-7 ml-auto" style="background-color: aqua">
+    <div class="container">
+        <nav class="sidebar">
+            {% for station in stat_addr %}
+            <a class="nav-link" href="/info/{{station[0]}}">{{station[1]}}</a>
+            {% endfor %}
+        </nav>
 
-                        <!-- link js module containing tools for drawing charts -->
-                        <script src="{{ url_for('static', filename='/jsModules/chart.js/dist/Chart.js') }}"></script>
-                        <!-- link js functions to request data & draw charts-->
-                        <script src="{{ url_for('static', filename='chartWidget.js') }}" ></script>
+        <div class="info-panel" id=station_info>
+            <p> testing </p>
+        </div>
 
-                        <div class="row" id="bikesByHourDiv" style="background-color: white">
-                            <h2> Free Bikes & Stands by Hour</h2>
-                            <div class="col-7" id="bikesByHourBtns"></div>
-                            <canvas id="bikesByHour" width="100%" height="25%"></canvas>
 
-                            <!-- Rectangular switch for selecting between COVID & non-COVID Data-->
-                            <label class="switch">
-                                <input id="showCovidDataSwitch" type="checkbox" onclick="changeHourlyGraph(dayNum)">
-                                <span class="slider"></span>
-                            </label>
+        <!-- link js module containing tools for drawing charts -->
+        <script src="{{ url_for('static', filename='/jsModules/chart.js/dist/Chart.js') }}"></script>
+        <!-- link js functions to request data & draw charts-->
+        <script src="{{ url_for('static', filename='chartWidget.js') }}" ></script>
 
-                        </div>
-                        <div class="row" id="bikesByWeekdayDiv" style="background-color: yellow">
-                            <h2> Station Traffic by Day </h2>
-                            <canvas id="bikesByWeekday" width="100%" height="25%"></canvas>
-                        </div>
+        <div class="chartA" id="bikesByHourDiv" style="background-color: white">
+            <h2> Free Bikes & Stands by Hour</h2>
+            <div class="col-7" id="bikesByHourBtns"></div>
+            <canvas id="bikesByHour" width="100%" height="25%"></canvas>
 
-                        <script>
-                            getChartData(stands[0].number, chartMain);
-                        </script>
-
-                    </div>
-                </div>
-            </main>
+            <!-- Rectangular switch for selecting between COVID & non-COVID Data-->
+            <label class="switch">
+                <input id="showCovidDataSwitch" type="checkbox" onclick="changeHourlyGraph(dayNum)">
+                <span class="slider"></span>
+            </label>
 
         </div>
+        <div class="chartB" id="bikesByWeekdayDiv" style="background-color: white">
+            <h2> Station Traffic by Day </h2>
+            <canvas id="bikesByWeekday" width="100%" height="25%"></canvas>
+        </div>
+
+        <script>
+            getChartData(stands[0].number, chartMain);
+        </script>
+
+
     </div>
 
 
 
-    <nav class=" navbar fixed-bottom navbar-expand-lg navbar-light" style="background-color: rgba(42, 42, 46, 1)">
-        <div class="container">
-            <div class="row w-100">
-                <div class="col">
-                </div>
-                <div class="col">
-                    <p class="text-center text-muted"><strong style="color: rgba(237, 237, 238, 1)">Team 14</strong></p>
-                </div>
-                <div class="col"></div>
-            </div>
-        </div>
-    </nav>
+    <footer>
+        <p><strong>Team 14</strong></p>
+    </footer>
 
 
 </body>

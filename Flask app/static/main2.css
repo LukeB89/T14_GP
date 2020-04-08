@@ -98,7 +98,7 @@ footer {
   left: 0;
   bottom: 0;
   width: 100%;
-  height: 40px;
+  height: 5rem;
   background-color: rgba(42, 42, 46, 1);
   color: rgba(237, 237, 238,1);
   text-align: center;
@@ -228,17 +228,62 @@ button {
 /*Info page css*/
 
 /*List of stations*/
-.sidebar {
-    position: fixed;
-    top: 5.1rem;
-    bottom: 3.5rem;
-    left: 0;
-    display: block;
-    overflow-x: hidden;
-    overflow-y: auto
-}
+
 
 .maindiv {
     position: relative;
     display: block;
 }
+
+.sidebar {
+    width: 15rem;
+    height: 48rem;
+    grid-area: sidebar;
+    overflow-y: auto;
+}
+
+.sidebar a {
+  background-color: #eee;
+  color: black;
+  display: block;
+  padding: 12px;
+  text-decoration: none;
+}
+
+.sidebar a:hover {
+  background-color: #ccc;
+}
+
+.sidebar a.active {
+  background-color: #2A2A2E;
+  color: white;
+}
+
+.info-panel{
+    grid-area: info-panel;
+    height: 48rem;
+    width: auto;
+}
+.chartA{
+    grid-area: chartA;
+    height: 24rem;
+    width: auto
+}
+.chartB{
+    grid-area: chartB;
+    height: 24rem;
+    width: auto
+}
+
+.container{
+    display: grid;
+    grid-template-columns: 15rem auto auto auto auto;
+    grid-template-areas: 
+        'sidebar info-panel chartA chartA chartA'
+        'sidebar info-panel chartB chartB chartB';
+    grid-gap: 1rem;
+    height: 48rem;
+    background-color: #ededee
+}
+
+
