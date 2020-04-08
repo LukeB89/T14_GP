@@ -85,7 +85,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
         lines.push(t);
     }
 
-    new Chart(ctx, {
+    var someChart = new Chart(ctx, {
             type: "line",
             data: {
                 labels: labels,
@@ -104,6 +104,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
                 lineAtIndex: 2
             }
     });
+    return someChart;
 }
 
 function getChartData(stationId, callback) {
@@ -150,14 +151,14 @@ function chartMain() {
 
 
     // step 3: draw charts (elemId, labels, dataPoints, dataLabels,  borderColours, fillColours)
-    createChart("bikesByHour", stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets[dayNum], stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
-    createChart("bikesByWeekday", stationPredictionData.bikesByWeekday.xAxisLabels, stationPredictionData.bikesByWeekday.dataSets.week, stationPredictionData.bikesByWeekday.seriesLabels, borderColours, fillColours);
+    hourlyChart = createChart("bikesByHour", stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets[dayNum], stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
+    dailyChart = createChart("bikesByWeekday", stationPredictionData.bikesByWeekday.xAxisLabels, stationPredictionData.bikesByWeekday.dataSets.week, stationPredictionData.bikesByWeekday.seriesLabels, borderColours, fillColours);
 
 }
 
 function changeHourlyGraph(day) {
     // remove the existing chart
-    document.getElementById("bikesByHour").innerHTML = "";
+    hourlyChart.destroy();
 
     // check if hourly prediction to be shown is for pre or post quarantine datatset
     var x = document.getElementById("showCovidDataSwitch").checked;
@@ -171,5 +172,5 @@ function changeHourlyGraph(day) {
     dayNum = day;
 
     // draw the new chart
-    createChart("bikesByHour", stationPredictionData[chartName].xAxisLabels, stationPredictionData[chartName].dataSets[day], stationPredictionData[chartName].seriesLabels, borderColours, fillColours);
+    hourlyChart = createChart("bikesByHour", stationPredictionData[chartName].xAxisLabels, stationPredictionData[chartName].dataSets[day], stationPredictionData[chartName].seriesLabels, borderColours, fillColours);
 }
