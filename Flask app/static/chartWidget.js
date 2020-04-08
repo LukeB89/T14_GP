@@ -1,14 +1,15 @@
 //define ip address of flask server - placeholder
 var host = "http://127.0.0.1:5000/";
 
-var times = ["05.00", "06.00", "07.00","08.00", "09.00", "10.00", "11.00", "12.00", "13.00", "14.00", "15.00", "16.00", "17.00", "18.00", "19.00", "20.00", "21.00", "22.00", "23.00", "24.00"];
-var freeStands = [15, 34, 45, 56, 67, 45 , 1, 34, 78, 5, 15, 34, 45, 56, 67, 45 , 1 ,34, 78, 5];
-var freeBikes = [75, 56, 45, 34, 23, 45, 89, 56, 12, 85, 75, 56, 45, 34, 23, 45, 89, 56, 12, 85];
 var borderColours = ["rgb(64, 204, 219)", "rgb(184, 202, 204)"];
 var fillColours = ["rgba(64, 204, 219, 0.8)", "rgba(184, 202, 204, 0.5)"];
 
 // an object for holding the predication data returned from the server for the currently selected stationId
 var stationPredictionData = {};
+
+// holds the numeric representation [0-6] for the current weekday displayed in the "bikesByDay" chart
+// initialises to the current weekday
+var dayNum = new Date().getDay();
 
 /*
 // extend chart type "line" to include a vertical line denoting current hour/day/etc
@@ -71,12 +72,18 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
     // get the chart container from the info.html page
     var ctx = document.getElementById(elemId);
 
-    lines = [];
-    for (var i = 0; i < dataPoints.length; i++) {
-        var t = new DataSet(dataPoints[i], dataLabels[i], true, fillColours[i], borderColours[i], 0.1);
+    var lines = [];
+    for (var i = 0; i < dataLabels.length; i++) {
+
+        // make sure that categorical datapoints are in the correct position on the x axis
+        var values = [];
+        for (var l = 0; l <labels.length; l++) {
+            thisLabel = labels[l]
+            values.push(dataPoints[i][thisLabel]);
+        }
+        var t = new DataSet(values, dataLabels[i], true, fillColours[i], borderColours[i], 0.1);
         lines.push(t);
     }
-    console.log(lines);
 
     new Chart(ctx, {
             type: "line",
@@ -99,7 +106,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
     });
 }
 
-function getChartData(stationId) {
+function getChartData(stationId, callback) {
     // request prediction data for the passed station ID for generating graphs
 
     fetch( host + "get_station_prediction?id=" + stationId, {mode: "cors", method: "GET",})
@@ -108,7 +115,8 @@ function getChartData(stationId) {
         .then(
             function(body) {
                 stationPredictionData = body;
-                return true;
+                console.log("Data received");
+                callback();
             })
         .catch(
             function(error) {
@@ -121,34 +129,47 @@ function getChartData(stationId) {
 function populateSelectOptions(dropdownId, chartName) {
     // populates the dropdown selection box corresponding to the passed dropdownId
     // with the values contained in chartName.chartKeys
+
+    // array to associate days of the week represented by the integers 0 - 6 with strings
+    var days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+
     var selectionList = document.getElementById(dropdownId);
     options = Object.keys(stationPredictionData[chartName].dataSets);
     for (let i of options) {
-        document.getElementById("bikesByHourBtns").innerHTML += '<button type="button" class="btn" onclick=changeHourlyGraph("' + i + '")>' + i + '</button>'
+        document.getElementById("bikesByHourBtns").innerHTML += '<button type="button" class="btn" onclick=changeHourlyGraph(' + i + ')>' + days[i] + '</button>'
         //selectionList.innerHTML += '<option value="' + i + '" onclick=changeHourlyGraph(' + i + ') >' + i + '</option>';
     }
 }
 
 
-async function chartMain(stationId) {
-    // this function is activated at an "onClick" event for one of the bike station links
+function chartMain() {
 
-    // step 1: request prediction information for this bikes station
-    await getChartData(stationId);
+    // step 1: populate drop-down selection boxes where charts have
+    // multiple dataSets (eg. 'bikesByHour')
+     populateSelectOptions("weekDays", "bikesByHour");
 
 
-    setTimeout(function() {
-        // step 2: populate drop-down selection boxes where charts have
-        // multiple dataSets (eg. 'bikesByHour')
-        populateSelectOptions("weekDays", "bikesByHour");
+    // step 3: draw charts (elemId, labels, dataPoints, dataLabels,  borderColours, fillColours)
+    createChart("bikesByHour", stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets[dayNum], stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
+    createChart("bikesByWeekday", stationPredictionData.bikesByWeekday.xAxisLabels, stationPredictionData.bikesByWeekday.dataSets.week, stationPredictionData.bikesByWeekday.seriesLabels, borderColours, fillColours);
 
-        // step 3: draw charts (elemId, labels, dataPoints, dataLabels,  borderColours, fillColours)
-        createChart("bikesByHour", stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets.Mon, stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
-        createChart("bikesByWeekday", stationPredictionData.bikesByWeekday.xAxisLabels, stationPredictionData.bikesByWeekday.dataSets.week, stationPredictionData.bikesByWeekday.seriesLabels, borderColours, fillColours);
-    }, 500)
 }
 
 function changeHourlyGraph(day) {
+    // remove the existing chart
     document.getElementById("bikesByHour").innerHTML = "";
-    createChart("bikesByHour", stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets[day], stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
+
+    // check if hourly prediction to be shown is for pre or post quarantine datatset
+    var x = document.getElementById("showCovidDataSwitch").checked;
+    if (x) {
+        chartName =  "bikesByHourCovid";
+    } else {
+        chartName =  "bikesByHour";
+    }
+
+    // update dayNum var with new numeric representation of weekday
+    dayNum = day;
+
+    // draw the new chart
+    createChart("bikesByHour", stationPredictionData[chartName].xAxisLabels, stationPredictionData[chartName].dataSets[day], stationPredictionData[chartName].seriesLabels, borderColours, fillColours);
 }

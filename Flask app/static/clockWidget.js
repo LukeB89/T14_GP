@@ -32,12 +32,12 @@ function updateWeather(gifsPath) {
         .then(
             function(body) {
                 var weatherInfo = body;
-                document.getElementById("clock-weatherDescription").innerText = weatherInfo.weather_main;
+                document.getElementById("clock-weatherDescription").innerText = weatherInfo.weather_description;
                 document.getElementById("clock-weatherImg").src = "http://openweathermap.org/img/wn/" + weatherInfo.weather_icon + "@2x.png";
-                document.getElementById("clock-weatherImg").alt = weatherInfo.weather_main + "image failed to load";
+                document.getElementById("clock-weatherImg").alt = weatherInfo.weather_description + "image failed to load";
                 document.getElementById("clock-temp").innerText = Number((weatherInfo.main_temp - 273.15).toFixed(2)) + " C\xB0";
 
-                updateWeatherGif(gifsPath);
+                updateWeatherGif(gifsPath, weatherInfo.weather_main);
             })
         .catch(
             function(error) {
@@ -45,9 +45,8 @@ function updateWeather(gifsPath) {
         });
 }
 
-function updateWeatherGif(gifsPath) {
+function updateWeatherGif(gifsPath, weather) {
     var clock = document.getElementById("clockWidget");
-    var weather = document.getElementById("clock-weatherDescription").innerText;
 
     if (clock.style.backgroundImage.src !== (host + gifsPath + backgroundImages[weather])) {
         var url = host + gifsPath + backgroundImages[weather];

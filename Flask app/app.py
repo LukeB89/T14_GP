@@ -74,7 +74,7 @@ def routemap():
 def get_weather_dublin():
     """Allows client side to get up-to-date weather Info for dublin"""
     dublin_weather = engine.execute("""
-        select w.main_temp, w.main_feels_like, w.weather_main, w.weather_icon
+        select w.main_temp, w.main_feels_like, w.weather_main, w.weather_icon, w.weather_description
         from weather_current w
         where w.name = "Dublin"
         """)
@@ -125,6 +125,19 @@ def get_station_prediction():
         ]}
     """
 
+    def convert_hours(hour):
+        """ utility function, converts an hour of the day entered in the string format 'pred_h_05' (as
+        recorded in the RDS database) into the 24 hour clock representation '05:00' """
+
+        # split the string into a list using underscores as the delimiter & select the last index in the list
+        n = hour.split("_")[-1]
+
+        # if n is only a single character; add a 0 to the front of n
+        if len(n) == 1:
+            n = "0" + n
+
+        return n + ":00"
+
     station_id = request.args.get("id")
     # get the daily trend from the database
 
@@ -148,7 +161,7 @@ def get_station_prediction():
                     where c.number = %s
                     """ % station_id)
 
-    # build the response json
+    # build the framework of the response json
     response = {
         "bikesByWeekday": {
             "dataSets": {
@@ -161,9 +174,15 @@ def get_station_prediction():
             "dataSets": {},
             "xAxisLabels": [],
             "seriesLabels": []
+        },
+        "bikesByHourCovid": {
+            "dataSets": {},
+            "xAxisLabels": [],
+            "seriesLabels": []
         }
     }
 
+    # populate the response json
     for row in stands:
         stands = dict(row)
     print(stands["bike_stands"])
@@ -173,26 +192,54 @@ def get_station_prediction():
         temp.pop("number")
         response["bikesByWeekday"]["dataSets"]["week"] = [temp]
         response["bikesByWeekday"]["seriesLabels"].append("Station Usage")
-    response["bikesByWeekday"]["xAxisLabels"] = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"]
+    response["bikesByWeekday"]["xAxisLabels"] = ["sun", "mon", "tue", "wed", "thur", "fri", "sat"]
 
     for row in prediction_by_hour:
         temp = dict(row)
         temp.pop("number")
         day = temp.pop("day")
-        response["bikesByHour"]["dataSets"][day] = ["bikes", "stands"]
-        response["bikesByHour"]["dataSets"][day][0] = temp
-        response["bikesByHour"]["xAxisLabels"] = list(temp.keys())
+        covid = temp.pop("covid")
+
+        # convert the names of the remaining keys/datafields into the 24-hour format
+        someDict = {}
+        for key in temp:
+            someDict[convert_hours(key)] = temp[key]
+        temp = someDict
+
+        # rectify values where the predicted number of bikes is negative
+        for i in temp:
+            if temp[i] < 0:
+                temp[i] = 0
+
+        if covid:
+            response["bikesByHourCovid"]["dataSets"][day] = ["bikes", "stands"]
+            response["bikesByHourCovid"]["dataSets"][day][0] = temp
+            response["bikesByHourCovid"]["xAxisLabels"] = list(temp.keys())
+
+        else:
+            response["bikesByHour"]["dataSets"][day] = ["bikes", "stands"]
+            response["bikesByHour"]["dataSets"][day][0] = temp
+            response["bikesByHour"]["xAxisLabels"] = list(temp.keys())
 
     response["bikesByHour"]["seriesLabels"] = ["Free Bikes", "Free Stands"]
+    response["bikesByHourCovid"]["seriesLabels"] = ["Free Bikes", "Free Stands"]
 
-    for day in response["bikesByHour"]["dataSets"]:
-        series = response["bikesByHour"]["dataSets"][day]
+    # generate data representing the number of free bike stands from
+    # the number of free bikes & the total number of stands
+    for data in ["bikesByHour", "bikesByHourCovid"]:
+        for day in response[data]["dataSets"]:
+            series = response[data]["dataSets"][day]
 
-        series[1] = {}
-        for key in list(series[0].keys()):
-            series[1][key] = abs(series[0][key] - stands["bike_stands"])
+            series[1] = {}
+            for key in list(series[0].keys()):
+                series[1][key] = abs(series[0][key] - stands["bike_stands"])
 
-    return jsonify(response)
+    # convert response into json
+    response = jsonify(response)
+    # add CORs security header to response : required for compatibility
+    response.headers.add('Access-Control-Allow-Origin', '*')
+
+    return response
 
 
 # allows us to run directly with python i.e. don't have to set env variables each time

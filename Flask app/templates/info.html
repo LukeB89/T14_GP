@@ -14,6 +14,24 @@
     <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='main.css') }}">
+
+
+    <!-- Placeholder styling for the sliding checkbox which switches between pre & post quarantine dataSets -->
+    <style>
+    .switch {position: relative; display: inline-block; width: 60px; height: 34px;}
+    /* Hide default HTML checkbox */
+    .switch input {opacity: 0; width: 0; height: 0;}
+    /* The slider */
+    .slider {position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; -webkit-transition: .4s; transition: .4s;}
+    .slider:before {position: absolute; content: ""; height: 26px; width: 26px; left: 4px; bottom: 4px; background-color: white; -webkit-transition: .4s; transition: .4s;}
+
+    input:checked + .slider {background-color: #2196F3;}
+
+    input:focus + .slider {box-shadow: 0 0 1px #2196F3;}
+
+    input:checked + .slider:before {-webkit-transform: translateX(26px); -ms-transform: translateX(26px); transform: translateX(26px);}
+    </style>
+
 </head>
 
 <script type="text/javascript">
@@ -228,19 +246,28 @@
                         <script src="{{ url_for('static', filename='/jsModules/chart.js/dist/Chart.js') }}"></script>
                         <!-- link js functions to request data & draw charts-->
                         <script src="{{ url_for('static', filename='chartWidget.js') }}" ></script>
-                        <script>
-                            chartMain(stands[0].number);
-                        </script>
-                        <div class="row" style="background-color: white">
+
+                        <div class="row" id="bikesByHourDiv" style="background-color: white">
                             <h2> Free Bikes & Stands by Hour</h2>
                             <div class="col-7" id="bikesByHourBtns"></div>
                             <canvas id="bikesByHour" width="100%" height="25%"></canvas>
 
+                            <!-- Rectangular switch for selecting between COVID & non-COVID Data-->
+                            <label class="switch">
+                                <input id="showCovidDataSwitch" type="checkbox" onclick="changeHourlyGraph(dayNum)">
+                                <span class="slider"></span>
+                            </label>
+
                         </div>
-                        <div class="row" style="background-color: yellow">
+                        <div class="row" id="bikesByWeekdayDiv" style="background-color: yellow">
                             <h2> Station Traffic by Day </h2>
                             <canvas id="bikesByWeekday" width="100%" height="25%"></canvas>
                         </div>
+
+                        <script>
+                            getChartData(stands[0].number, chartMain);
+                        </script>
+
                     </div>
                 </div>
             </main>
