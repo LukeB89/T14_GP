@@ -66,6 +66,13 @@ button {
     float: left;
 }
 
+#route-map {
+    width: 100vw;
+    position: relative;
+    margin-left: -50vw;
+    left: 50%;
+}
+
 /* Styling for infowindows on map*/
 #iw {
     text-align: center;

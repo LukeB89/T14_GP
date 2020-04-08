@@ -41,7 +41,7 @@ def index_page_route():
     statinfo = engine.execute(bulk_data+ordered)
     coords = {"dest":[float(request.args.get('tolat')),float(request.args.get('tolong'))],
             "origin":[float(request.args.get('fromlat')), float(request.args.get('fromlong'))]}
-    return render_template('routeindex.html', title='Map', statinfo=statinfo, coordinates=coords)
+    return render_template('routeindex2.html', title='Map', statinfo=statinfo, coordinates=coords)
 
 
 @app.route("/info")

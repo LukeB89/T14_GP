@@ -9,63 +9,20 @@
     {% endif %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='main2.css') }}">
 </head>
 
 <body>
-
-    <nav class="navbar navbar-expand-lg navbar-light navbar-right" style="background-color: rgba(42, 42, 46, 1)">
-        <a class="navbar-brand" href="#">
-            <h1><strong>dublinbikes</strong></h1>
-        </a>
-        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="navbar-collapse collapse" id="navbarColor03" style="background-color: rgba(42, 42, 46, 1)">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item active">
-                    <a class="nav-link" href="/index">
-                        <h5>Map</h5>
-                    </a>
-                </li>
-                <li class="nav-item">
-                    <a class="nav-link" href="/info">
-                        <h5>Info</h5>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-    <div class="container-fluid">
-        <div class="row">
-            <main class="col-12 maindiv" role="main" style="background-color: #ff1111;">
-                <div class="row">
-                    <div class="contianer w-100" id="map">
-                        <h1>Map here</h1>
-                    </div>
-                </div>
-            </main>
+    <div class="header">
+        <a href="#default" class="logo">dublinbikes</a>
+        <div class="header-right">
+            <a href="/index">Map</a>
+            <a href="/info">Info</a>
         </div>
     </div>
-
-<!--    <nav class="navbar fixed-bottom navbar-expand-lg navbar-light" style="background-color: rgba(42, 42, 46, 1)">-->
-<!--        <div class="container">-->
-<!--            <div class="row w-100">-->
-<!--                <div class="col">-->
-<!--                </div>-->
-<!--                <div class="col">-->
-<!--                    <p class="text-center text-muted"><strong style="color: rgba(237, 237, 238, 1)">Team 14</strong></p>-->
-<!--                </div>-->
-<!--                <div class="col"></div>-->
-<!--            </div>-->
-<!--        </div>-->
-<!--    </nav>-->
+    <div id="route-map">
+        <div id="map" style="width: 100%;">Map goes here...</div>
+    </div>
     <script type="text/javascript">
         var stands = [];
         var org = {{coordinates.origin}};
@@ -85,8 +42,8 @@
                     banking:"{{ i[10] }}",
                     bonus:"{{ i[11] }}"});
         {% endfor %}
-        
-        
+
+
         function initMap() {
 
             var prev_iw = false;
@@ -110,7 +67,7 @@
                     if((i.lat == org[0] && i.lng == org[1]) || (i.lat == dst[0] && i.lng == dst[1])){
                         continue;
                     }
-                    
+
                     addMarkers({
                         coords:{lat:i.lat,lng:i.lng},
                         content:'<div id="iw"><h4>'+i.address+'</h4><h6>Status: '+i.status+'</h6><h6>Available Stands: '+i.free_stands+'</h6><h6>Available Bikes: '+i.free_bikes+'</h6></div>',
@@ -118,11 +75,11 @@
                         });
                    }
             }
-            
+
             directionsDisplay.setMap(map);
 
             calcAndDisplayRoute(directionsService, directionsDisplay);
-            
+
             function calcAndDisplayRoute(directionsService, directionsDisplay) {
                 directionsService.route({
                     origin: String(org),
@@ -136,7 +93,7 @@
                         }
                     });
             }
-            
+
             function addMarkers(prop){
             var marker = new google.maps.Marker({
                 position : prop.coords,
