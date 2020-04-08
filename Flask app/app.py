@@ -224,12 +224,15 @@ def get_station_prediction():
     response["bikesByHour"]["seriesLabels"] = ["Free Bikes", "Free Stands"]
     response["bikesByHourCovid"]["seriesLabels"] = ["Free Bikes", "Free Stands"]
 
-    for day in response["bikesByHour"]["dataSets"]:
-        series = response["bikesByHour"]["dataSets"][day]
+    # generate data representing the number of free bike stands from
+    # the number of free bikes & the total number of stands
+    for data in ["bikesByHour", "bikesByHourCovid"]:
+        for day in response[data]["dataSets"]:
+            series = response[data]["dataSets"][day]
 
-        series[1] = {}
-        for key in list(series[0].keys()):
-            series[1][key] = abs(series[0][key] - stands["bike_stands"])
+            series[1] = {}
+            for key in list(series[0].keys()):
+                series[1][key] = abs(series[0][key] - stands["bike_stands"])
 
     # convert response into json
     response = jsonify(response)
