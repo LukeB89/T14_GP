@@ -74,7 +74,7 @@ def routemap():
 def get_weather_dublin():
     """Allows client side to get up-to-date weather Info for dublin"""
     dublin_weather = engine.execute("""
-        select w.main_temp, w.main_feels_like, w.weather_main, w.weather_icon
+        select w.main_temp, w.main_feels_like, w.weather_main, w.weather_icon, w.weather_description
         from weather_current w
         where w.name = "Dublin"
         """)
