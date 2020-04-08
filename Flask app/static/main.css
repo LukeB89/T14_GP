@@ -6,6 +6,11 @@ body {
     background-colour: rgba(273, 273, 238, 1);
 }
 
+#map {
+    height: 49rem;
+    width: 100%;
+}
+
 .sidebar {
     position: fixed;
     top: 5.1rem;
@@ -21,10 +26,6 @@ body {
     display: block;
 }
 
-#map {
-    height: 39rem;
-    width: 100%;
-}
 
 #clockWidget {
     background-repeat: no-repeat;

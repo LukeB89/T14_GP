@@ -59,7 +59,7 @@
 
             addMarkers({
             coords:{lat:i.lat,lng:i.lng},
-            content:'<h6>Station Number: '+i.number+'</h6><h6>Address: '+i.address+'</h6><h6>Status: '+i.status+'</h6><h6>Available Stands: '+i.free_stands+'</h6><h6>Available Bikes: '+i.free_bikes+'</h6><h6>Temperature: '+i.temp+'</h6><h6>Feels Like: '+i.feels_like+'</h6><img src="http://openweathermap.org/img/wn/'+i.weather_img+'@2x.png" alt="'+i.weather_type+'">',
+            content:'<h4>'+i.address+'</h4><h6>Station Number: '+i.number+'</h6><h6>Status: '+i.status+'</h6><h6>Available Stands: '+i.free_stands+'</h6><h6>Available Bikes: '+i.free_bikes+'</h6><p>'+i.temp+'&#176; but feels like '+i.feels_like+'&#176;</p><img src="http://openweathermap.org/img/wn/'+i.weather_img+'@2x.png" alt="'+i.weather_type+'">',
             pin: i.free_bikes
             });
 

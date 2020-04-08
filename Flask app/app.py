@@ -33,7 +33,7 @@ ordered = " order by s.address asc"
 def index_page():
     # request co-ordinates, name, number & dynamic bikes/weather data from DataBase for each bike station
     statinfo = engine.execute(bulk_data+ordered)
-    return render_template('index.html', title='Map', statinfo=statinfo)
+    return render_template('index2.html', title='Map', statinfo=statinfo)
 
 
 @app.route("/index/route")
