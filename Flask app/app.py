@@ -47,14 +47,14 @@ def index_page_route():
 @app.route("/info")
 def info_page():
     stat_addr = engine.execute(station_data+ordered)
-    return render_template('info2.html', stat_addr = stat_addr, stat_info="none")  # pulls home.html template from templates folder
+    return render_template('info2.html', stat_addr = stat_addr, statinfo="none")  # pulls home.html template from templates folder
 
 
 @app.route("/info/<stat_id>")
 def info_page_refined(stat_id):
     statinfo = engine.execute(bulk_data+" and s.number = " + stat_id+ordered)
     stat_addr = engine.execute(station_data+ordered)
-    return render_template('info2.html', stat_addr = stat_addr,  statinfo = statinfo)  # pulls home.html template from templates folder
+    return render_template('info2.html', stat_addr = stat_addr,  statinfo = statinfo, page=stat_id)  # pulls home.html template from templates folder
 
 
 @app.route("/")

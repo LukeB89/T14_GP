@@ -108,7 +108,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
 function getChartData(stationId, callback) {
     // request prediction data for the passed station ID for generating graphs
 
-    fetch("get_station_prediction?id=" + stationId, {mode: "cors", method: "GET",})
+    fetch("/get_station_prediction?id=" + stationId, {mode: "cors", method: "GET",})
         .then(response => response.json())
         //.then(body => console.log(body))
         .then(
@@ -138,6 +138,7 @@ function populateSelectOptions(dropdownId, chartName) {
         document.getElementById("bikesByHourBtns").innerHTML += '<button type="button" class="btn" onclick=changeHourlyGraph(' + i + ')>' + days[i] + '</button>'
         //selectionList.innerHTML += '<option value="' + i + '" onclick=changeHourlyGraph(' + i + ') >' + i + '</option>';
     }
+    document.getElementById("bikesByHourBtns").innerHTML += '<label class="switch"> <input id="showCovidDataSwitch" type="checkbox" onclick="changeHourlyGraph(dayNum)"><span class="slider"></span></label><span id="slabel"><strong>Pandemic Data</strong></span>'
 }
 
 

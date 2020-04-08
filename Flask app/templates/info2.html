@@ -14,7 +14,7 @@
 
     <!-- Placeholder styling for the sliding checkbox which switches between pre & post quarantine dataSets -->
     <style>
-    .switch {position: relative; display: inline-block; width: 60px; height: 34px;}
+    .switch {position: relative; display: inline-block; width: 60px; height: 34px; margin-left: 2rem;}
     /* Hide default HTML checkbox */
     .switch input {opacity: 0; width: 0; height: 0;}
     /* The slider */
@@ -36,6 +36,7 @@
                      free_stands:"Empty Stands:", lat:"Station Latitude:", lng:"Station Longitude:", banking:"Payment Terminal:", bonus:"Bonus Station:"}
     var isEmpty = true;
     var main_div, head, row, info_name, info_value, container;
+    
     {% if statinfo == "none" %}
         isEmpty = true;
     {% else %}
@@ -57,40 +58,46 @@
         {% endfor %}
     {% endif %}
 
-    console.log(stands)
-
-
     function load(){
         main_div = document.getElementById("station_info");
         if (isEmpty){
-            head = document.createElement("H1");
-            head.innerHTML = "<strong>Station Information</strong>";
+            head = document.createElement("SPAN");
+            head.innerHTML = "<h1><strong>Station Information</strong></h1>";
             main_div.appendChild(head);
+            row = document.createElement("SPAN");
+            row.innerHTML = "<h2><strong>Please Select a Station</strong></h2>";
+            main_div.appendChild(row);
         } else {
-            head = document.createElement("H1");
-            head.innerHTML = "<strong>Station Information</strong>";
+            head = document.createElement("SPAN");
+            head.innerHTML = "<h1><strong>Station Information</strong></h1>";
             main_div.appendChild(head);
 
             container = document.createElement("DIV");
-            container.setAttribute("class","container w-100");
-            container.setAttribute("style", "background-color: brown");
+            container.setAttribute("class","info-container");
             for(var key in info_rows){
 
-                row = document.createElement("DIV");
-                row.setAttribute("class","row");
                 info_name = document.createElement("DIV");
-                info_name.setAttribute("class","col-5 col-sm-3 col-md-3 col-lg-4 col-xl-5");
+                info_name.setAttribute("class","col");
                 info_name.innerHTML = "<h5><strong>"+info_rows[key]+"</strong></h5>";
-                row.appendChild(info_name);
+                container.appendChild(info_name);
                 info_value = document.createElement("DIV");
-                info_value.setAttribute("class","col-5 col-sm-4 col-md-4 col-lg-4 col-xl-5 ml-auto");
+                info_value.setAttribute("class","col");
                 info_value.innerHTML = "<h5><strong>"+stands[0][key]+"</strong></h5>"
-                row.appendChild(info_value);
-                container.appendChild(row);
+                container.appendChild(info_value);
             }
             main_div.appendChild(container);
 
 
+        }
+        
+        var links = document.getElementsByClassName("side-list");
+        for(var i = 0; i < links.length; i++){
+            
+            if(links[i].getAttribute("HREF") == window.location.pathname){
+                links[i].setAttribute("class","active");
+                break;
+            }
+                
         }
     }
 
@@ -98,10 +105,10 @@
 </script>
 <body onload="load()">
     <div class="header">
-        <a href="#default" class="logo">dublinbikes</a>
+        <a href="/index" class="logo">dublinbikes</a>
             <div class="header-right">
-                <a href="index2">Map</a>
-                <a href="info">Info</a>
+                <a href="/index">Map</a>
+                <a href="/info">Info</a>
             </div>
         </div>
 
@@ -109,12 +116,11 @@
     <div class="container">
         <nav class="sidebar">
             {% for station in stat_addr %}
-            <a class="nav-link" href="/info/{{station[0]}}">{{station[1]}}</a>
+            <a href="/info/{{station[0]}}" class="side-list">{{station[1]}}</a>
             {% endfor %}
         </nav>
 
         <div class="info-panel" id=station_info>
-            <p> testing </p>
         </div>
 
 
@@ -125,14 +131,11 @@
 
         <div class="chartA" id="bikesByHourDiv" style="background-color: white">
             <h2> Free Bikes & Stands by Hour</h2>
-            <div class="col-7" id="bikesByHourBtns"></div>
+            <div id="bikesByHourBtns"></div>
             <canvas id="bikesByHour" width="100%" height="25%"></canvas>
 
             <!-- Rectangular switch for selecting between COVID & non-COVID Data-->
-            <label class="switch">
-                <input id="showCovidDataSwitch" type="checkbox" onclick="changeHourlyGraph(dayNum)">
-                <span class="slider"></span>
-            </label>
+            
 
         </div>
         <div class="chartB" id="bikesByWeekdayDiv" style="background-color: white">
