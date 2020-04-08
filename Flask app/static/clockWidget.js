@@ -2,6 +2,8 @@
 var host = "http://127.0.0.1:5000/";
 
 function updateClock() {
+    //update the date & time information in the clock widget
+
     //create a date object with the current timestamp
     var date = new Date();
 
@@ -26,7 +28,8 @@ function updateClock() {
 }
 
 function updateWeather(gifsPath) {
-    fetch( "/get_weather_dublin", {mode: "cors", method: "GET",})
+    // updates the weather information displayed in the clock widget
+    fetch("/get_weather_dublin", {mode: "cors", method: "GET",})
         .then(response => response.json())
         //.then(body => console.log(body))
         .then(
@@ -46,6 +49,7 @@ function updateWeather(gifsPath) {
 }
 
 function updateWeatherGif(gifsPath, weather) {
+    // updates the background image of the clock widget to reflect the current weather conditions
     var clock = document.getElementById("clockWidget");
 
     if (clock.style.backgroundImage.src !== (gifsPath + backgroundImages[weather])) {
@@ -56,7 +60,11 @@ function updateWeatherGif(gifsPath, weather) {
     }
 }
 
-//create a dict object to match weather types to background image urls
+function weatherAlert() {
+    // displays a welcome alert message based on the predicted weather for the near future
+}
+
+//create a dictionary-like object to match weather types to background image urls
 var backgroundImages = new Object;
 backgroundImages["Thunderstorm"] = "thunder1.gif";
 backgroundImages["Drizzle"] = "drizzle1.gif";
@@ -73,3 +81,7 @@ backgroundImages["Tornado"] = "default_weather.gif";
 backgroundImages["Clear"] = "clear1.gif";
 backgroundImages["Clouds"] = "clouds1.gif";
 backgroundImages["Rain"] = "rain2.gif";
+
+//create a dictionary-like object to match weather prediction types to alert messages
+var alertMessages = new Object;
+alertMessages["Rain"] = "Looks like it's going to be wet... Don't forget your umbrella!";
