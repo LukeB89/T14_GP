@@ -44,7 +44,6 @@
 
     function initMap() {
         var prev_iw = false;
-
         radius = 20, zoom = 14;
 
         var location = {lat: 53.3498, lng: -6.2603};
@@ -89,8 +88,6 @@
 
             }
 
-
-
             google.maps.event.addListener(marker, 'click', function() {
                 if (prev_iw) {
                     prev_iw.close();
@@ -116,7 +113,6 @@
         }
 
     }
-
 
     function buildURL(){
         var origin = document.getElementById('from').value.split(',');
