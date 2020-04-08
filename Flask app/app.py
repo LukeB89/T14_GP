@@ -47,7 +47,7 @@ def index_page_route():
 @app.route("/info")
 def info_page():
     stat_addr = engine.execute(station_data+ordered)
-    return render_template('info.html', stat_addr = stat_addr, stat_info="none")  # pulls home.html template from templates folder
+    return render_template('info2.html', stat_addr = stat_addr, stat_info="none")  # pulls home.html template from templates folder
 
 
 @app.route("/info/<stat_id>")

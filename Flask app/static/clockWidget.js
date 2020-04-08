@@ -29,7 +29,7 @@ function updateClock() {
 
 function updateWeather(gifsPath) {
     // updates the weather information displayed in the clock widget
-    fetch( host + "get_weather_dublin", {mode: "cors", method: "GET",})
+    fetch("/get_weather_dublin", {mode: "cors", method: "GET",})
         .then(response => response.json())
         //.then(body => console.log(body))
         .then(
@@ -52,8 +52,8 @@ function updateWeatherGif(gifsPath, weather) {
     // updates the background image of the clock widget to reflect the current weather conditions
     var clock = document.getElementById("clockWidget");
 
-    if (clock.style.backgroundImage.src !== (host + gifsPath + backgroundImages[weather])) {
-        var url = host + gifsPath + backgroundImages[weather];
+    if (clock.style.backgroundImage.src !== (gifsPath + backgroundImages[weather])) {
+        var url = gifsPath + backgroundImages[weather];
         clock.setAttribute("style", "background-image: url("+ url +");");
         clock.setAttribute("alt", weather);
     } else {
