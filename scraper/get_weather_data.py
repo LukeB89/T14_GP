@@ -146,7 +146,8 @@ def get_forecast_all():
             temp = flatten_dict(prediction)
 
             # select a subset of the data from the returned forecast data
-            subset_data = ["dt", "main_temp", "main", "description", "icon", "wind_speed", "dt_txt", "main_humidity"]
+            subset_data = ["dt", "main_temp", "main", "description", "icon",
+                           "wind_speed", "dt_txt", "main_humidity", "id"]
             forecast_data = {}
             for cat in subset_data:
                 forecast_data[cat] = temp[cat]
@@ -160,10 +161,3 @@ def get_forecast_all():
                 if response[0] == 1062:
                     db_query(query="update", table="w_forecast", data=forecast_data,
                              pkeys={"name": forecast_data["name"], "dt": forecast_data["dt"]})
-
-
-# new weather scraper calls these no need for run function
-#a = get_weather_data(forecast=True)
-#print(a["list"][0])
-
-get_forecast_all()
