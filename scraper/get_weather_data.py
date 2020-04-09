@@ -14,11 +14,15 @@ config.read("config.ini")
 options = config["weatherAPI"]
 
 
-def get_weather_data(**kwargs):
+def get_weather_data(forecast=False, **kwargs):
     """gets live weather data from openweathermap.org.
     Takes keyword args 'lat' & 'lon' (ie. latitude and longitude):
     default values of'lat' & 'lon' return weather for Dublin city.
-    Returns a dictionary containing weather data"""
+    Returns a dictionary containing weather data.
+
+    If optional argument 'forecast' is est to True then returns a
+    dictionary containing  forecast weather data at 3-hour intervals
+    for the next 5 days."""
 
     if "lat" in kwargs:
         lat = kwargs["lat"]
@@ -33,8 +37,14 @@ def get_weather_data(**kwargs):
     else:
         key = options["key"]                            # default openWeatherMap API key
 
+    # check if requesting current or prediction weather data - defaults to current
+    if forecast is False:
+        query = "weather"
+    else:
+        query = "forecast"
+
     # create openWeatherMap API query using input latitude, longitude and api key
-    url = "http://api.openweathermap.org/data/2.5/weather?lat=" + str(lat) + "&lon=" + str(lon) + "&appid=" + key
+    url = "http://api.openweathermap.org/data/2.5/" + query + "?lat=" + str(lat) + "&lon=" + str(lon) + "&appid=" + key
 
     # get weather info and convert to python dict
     response = requests.get(url)
@@ -108,7 +118,7 @@ def get_weather_all():
 
         db_query(query="push", table="w_dynamic", data=weather_data)
 
-        # update dynamic information held for weather in table "weather_dynamic": attempts
+        # update dynamic information held for weather in table "weather_current": attempts
         # to "insert" information as new row, calls "update" query on duplicate key error
         response = db_query(query="push", table="w_current", data=weather_data)
         if response is not None:
@@ -117,4 +127,7 @@ def get_weather_all():
                 db_query(query="update", table="w_current", data=weather_data, pkeys={"name": weather_data["name"]})
 
 # new weather scraper calls these no need for run function
-# get_weather_all()
+#a = get_weather_data(forecast=True)
+#print(a["list"][0])
+
+get_forecast_all()
