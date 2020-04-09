@@ -126,6 +126,42 @@ def get_weather_all():
             if response[0] == 1062:
                 db_query(query="update", table="w_current", data=weather_data, pkeys={"name": weather_data["name"]})
 
+
+def get_forecast_all():
+    """updates forecast weather data for each weather station
+    listed in the "weather_forecast" table on the RDS database"""
+
+    # get weather station data from database table "weather_static"
+    weather_stations = db_query(query="pull", table="w_static")
+
+    # get the weather prediction data for each weather station in the "weather_static"
+    for station in weather_stations:
+
+        prediction_data = get_weather_data(forecast=True, lat=station["latitude"], lon=station["longitude"])
+
+        # for each individual prediction in the returned dict;
+        for prediction in prediction_data["list"]:
+
+            # flatten dict to get rid of nesting
+            temp = flatten_dict(prediction)
+
+            # select a subset of the data from the returned forecast data
+            subset_data = ["dt", "main_temp", "main", "description", "icon", "wind_speed", "dt_txt", "main_humidity"]
+            forecast_data = {}
+            for cat in subset_data:
+                forecast_data[cat] = temp[cat]
+            forecast_data["name"] = station["w_station_name"]
+
+            # update dynamic information held for weather in table "weather_current": attempts
+            # to "insert" information as new row, calls "update" query on duplicate key error
+            response = db_query(query="push", table="w_forecast", data=forecast_data)
+            if response is not None:
+                # if the response is a duplicate key error perform an "update" query:
+                if response[0] == 1062:
+                    db_query(query="update", table="w_forecast", data=forecast_data,
+                             pkeys={"name": forecast_data["name"], "dt": forecast_data["dt"]})
+
+
 # new weather scraper calls these no need for run function
 #a = get_weather_data(forecast=True)
 #print(a["list"][0])
