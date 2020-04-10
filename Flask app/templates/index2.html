@@ -94,7 +94,7 @@
 
             addMarkers({
             coords:{lat:i.lat,lng:i.lng},
-            content:'<div id="iw"><h4>'+i.address+'</h4><h6>Station Number: '+i.number+'</h6><h6>Status: '+i.status+'</h6><h6>Available Stands: '+i.free_stands+'</h6><h6>Available Bikes: '+i.free_bikes+'</h6><img src="http://openweathermap.org/img/wn/'+i.weather_img+'@2x.png" alt="'+i.weather_type+'"><p>'+i.temp+'&#176; but feels like '+i.feels_like+'&#176;</p></div>',
+            content:'<div id="iw"><h4>#'+i.number+': '+i.address+'</h4><h6>Status: '+i.status+'</h6><h6>Available Stands: '+i.free_stands+'</h6><h6>Available Bikes: '+i.free_bikes+'</h6><img src="http://openweathermap.org/img/wn/'+i.weather_img+'@2x.png" alt="'+i.weather_type+'"><p>'+i.temp+'&#176; but feels like '+i.feels_like+'&#176;</p><button id="infobutton" onclick="buildInfoURL('+i.number+')">Info</button></div>',
             pin: i.free_bikes
             });
 
@@ -158,6 +158,13 @@
         url += "&fromlat="+origin[0]+"&fromlong="+origin[1];
         window.location = url;
     }
+
+    function buildInfoURL(station){
+        var link = "/info/";
+        link += station;
+        window.location = link;
+    }
+
 </script>
 
 <body onload="load()">
