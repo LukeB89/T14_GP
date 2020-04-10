@@ -92,6 +92,10 @@ button {
     font-size: 14px;
 }
 
+#infobutton {
+    overflow:hidden;
+}
+
 h1 {
     font-size: 40px;
     color: rgba(237, 237, 238, 1);
