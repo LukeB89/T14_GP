@@ -12,16 +12,16 @@ if(dayNum<0){
     dayNum = 6;
 }
 
-/*
+
 // extend chart type "line" to include a vertical line denoting current hour/day/etc
 // source: https://stackoverflow.com/questions/30256695/chart-js-drawing-an-arbitrary-vertical-line
-var originalLineController = Chart.controllers.line;
-Chart.controllers.line = Chart.controllers.line.extend({
+
+Chart.defaults.lineCustom = Chart.defaults.line;
+var myChart = Chart.controllers.line.extend({
     draw: function () {
-        originalLineController.prototype.draw.apply(this, arguments);
+        Chart.controllers.line.prototype.draw.apply(this, arguments);
 
-        console.log(this);
-
+        /*
         var point = this._data[0][this.chart.options.lineAtIndex];
         var scale = this.scale;
 
@@ -35,9 +35,12 @@ Chart.controllers.line = Chart.controllers.line.extend({
         // write TODAY
         this.chart.ctx.textAlign = 'center';
         this.chart.ctx.fillText("TODAY", point.x, scale.startPoint + 12);
+        */
     }
 });
-*/
+
+Chart.controllers.lineCustom = myChart;
+
 
 function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fillColours) {
     // creates a chartJS stacked-line-graph with a categorical x-axis in the passed html <canvas id=[elemId]> element
@@ -88,7 +91,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
     }
 
     var someChart = new Chart(ctx, {
-            type: "line",
+            type: "bar",
             data: {
                 labels: labels,
                 datasets: lines
@@ -174,6 +177,8 @@ function displayDate(){
 }
 
 function chartMain() {
+
+    console.log("Hello There!");
 
     // step 1: populate drop-down selection boxes where charts have
     // multiple dataSets (eg. 'bikesByHour')
