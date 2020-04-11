@@ -72,6 +72,8 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
     // get the chart container from the info.html page
     var ctx = document.getElementById(elemId);
     ctx.setAttribute("height","68%");
+    console.log(ctx.getAttribute("height"))
+//    ctx.setAttribute("height","20%");
     var lines = [];
     for (var i = 0; i < dataLabels.length; i++) {
 
