@@ -240,10 +240,16 @@ button {
     border: .5px solid gray;
     background-color: rgba(42, 42, 46, 1);
 }
+
 .btn{
     width: 5rem;
     margin-bottom: 1rem;
     margin-left: 0.5rem;
+}
+.btn#active{
+    background-color: #40CCDB;
+    color: #2A2A2E;
+    font-weight: bolder;
 }
 #slabel{
     margin-left: 1rem;
@@ -328,6 +334,26 @@ span h2{
     border-radius: 1rem;
 }
 
+.box-info{
+    display: inline-block;
+    border: 0.5rem solid gray;
+    width: 12rem;
+    padding: 0;
+    margin-left: 1rem;
+    text-align: center;
+}
+.box-info h4{
+    padding: 0;
+    margin: 0;
+}
+.box-info p{
+    padding: 0;
+    margin: 0;
+}
+
+#bikesByHourDiv h2{
+    margin-bottom: 0;
+}
 
 
 

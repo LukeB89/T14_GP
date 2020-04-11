@@ -7,6 +7,7 @@ import requests
 import json
 from configparser import ConfigParser
 from db_interactions import db_query
+import datetime as dt
 
 # read DataBase info from the config file
 config = ConfigParser()
@@ -152,7 +153,8 @@ def get_forecast_all():
             for cat in subset_data:
                 forecast_data[cat] = temp[cat]
             forecast_data["name"] = station["w_station_name"]
-
+            forecast_data["day"] = dt.datetime.fromtimestamp(temp["dt"]).weekday()
+            forecast_data["hour"] = dt.datetime.utcfromtimestamp(temp["dt"]).hour
             # update dynamic information held for weather in table "weather_current": attempts
             # to "insert" information as new row, calls "update" query on duplicate key error
             response = db_query(query="push", table="w_forecast", data=forecast_data)
@@ -160,4 +162,4 @@ def get_forecast_all():
                 # if the response is a duplicate key error perform an "update" query:
                 if response[0] == 1062:
                     db_query(query="update", table="w_forecast", data=forecast_data,
-                             pkeys={"name": forecast_data["name"], "dt": forecast_data["dt"]})
+                             pkeys={"name": forecast_data["name"], "day": forecast_data["day"], "hour": forecast_data["hour"]})

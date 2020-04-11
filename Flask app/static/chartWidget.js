@@ -7,7 +7,10 @@ var stationPredictionData = {};
 
 // holds the numeric representation [0-6] for the current weekday displayed in the "bikesByDay" chart
 // initialises to the current weekday
-var dayNum = new Date().getDay();
+var dayNum = new Date().getDay() - 1;
+if(dayNum<0){
+    dayNum = 6;
+}
 
 /*
 // extend chart type "line" to include a vertical line denoting current hour/day/etc
@@ -46,7 +49,6 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
     // borderColours: an array containing the line/border colour for each line
     // fillColours: an array containing the fill colour beneath each line
 
-
     function DataSet(data, label, fill, fillColor, borderColor, lineTension) {
         // formats the passed data as an object w/ instance variables to be passed
         // to the Chart() object constructor
@@ -69,7 +71,7 @@ function createChart(elemId, labels, dataPoints, dataLabels,  borderColours, fil
 
     // get the chart container from the info.html page
     var ctx = document.getElementById(elemId);
-
+    ctx.setAttribute("height","68%");
     var lines = [];
     for (var i = 0; i < dataLabels.length; i++) {
 
@@ -130,24 +132,51 @@ function populateSelectOptions(dropdownId, chartName) {
     // with the values contained in chartName.chartKeys
 
     // array to associate days of the week represented by the integers 0 - 6 with strings
-    var days = ["sun", "mon", "tue", "wed", "thu", "fri", "sat"];
+    var days = ["Mon", "Tue", "Wed", "Thu", "Fri", "Sat", "Sun"];
+    var dateDisp = displayDate(); 
 
     var selectionList = document.getElementById(dropdownId);
     options = Object.keys(stationPredictionData[chartName].dataSets);
     for (let i of options) {
-        document.getElementById("bikesByHourBtns").innerHTML += '<button type="button" class="btn" onclick=changeHourlyGraph(' + i + ')>' + days[i] + '</button>'
+        if(i == dayNum){
+            document.getElementById("bikesByHourBtns").innerHTML += '<button type="button" class="btn" onclick=changeHourlyGraph(' + i + ') id="active">' + days[i] + '</button>'    
+        }
+        else{
+            document.getElementById("bikesByHourBtns").innerHTML += '<button type="button" class="btn" onclick=changeHourlyGraph(' + i + ') id="nonactive">' + days[i] + '</button>'
+        
+        }
         //selectionList.innerHTML += '<option value="' + i + '" onclick=changeHourlyGraph(' + i + ') >' + i + '</option>';
     }
     document.getElementById("bikesByHourBtns").innerHTML += '<label class="switch"> <input id="showCovidDataSwitch" type="checkbox" onclick="changeHourlyGraph(dayNum)"><span class="slider"></span></label><span id="slabel"><strong>Pandemic Data</strong></span>'
+    
+    document.getElementById("bikesByHourBtns").innerHTML += '<div class="box-info"><h4><strong>Viewing Day</strong></h4><p id="date">' +dateDisp.getDate() + '/' + dateDisp.getMonth() + '/' + dateDisp.getFullYear() + '</p></div>'
 }
-
+function updateActiveButton(){
+    var buttons = document.getElementsByClassName("btn");
+    for(let btn of buttons){
+        if(btn.getAttribute("id") == "active"){
+            btn.setAttribute("id","nonactive")
+        }
+    }
+    buttons[dayNum].setAttribute("id","active")
+}
+function displayDate(){
+    // this code was found on stackoverflow:
+    // https://stackoverflow.com/questions/12791378/get-the-most-recently-occurring-sunday
+    var tempDay = dayNum +1 ;
+    
+    var now = new Date();
+    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
+    var dateToDisplay = new Date(today.setDate(today.getDate()-today.getDay()+tempDay));
+    return dateToDisplay;
+}
 
 function chartMain() {
 
     // step 1: populate drop-down selection boxes where charts have
     // multiple dataSets (eg. 'bikesByHour')
-     populateSelectOptions("weekDays", "bikesByHour");
-
+    populateSelectOptions("weekDays", "bikesByHour");
+    console.log("dayNum: " + dayNum)
 
     // step 3: draw charts (elemId, labels, dataPoints, dataLabels,  borderColours, fillColours)
     hourlyChart = createChart("bikesByHour", stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets[dayNum], stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
@@ -166,10 +195,13 @@ function changeHourlyGraph(day) {
     } else {
         chartName =  "bikesByHour";
     }
-
+    
     // update dayNum var with new numeric representation of weekday
     dayNum = day;
+    updateActiveButton();
+    var dateDisp = displayDate();
+    document.getElementById("date").innerHTML = dateDisp.getDate() + '/' + dateDisp.getMonth() + '/' + dateDisp.getFullYear();
 
     // draw the new chart
-    hourlyChart = createChart("bikesByHour", stationPredictionData[chartName].xAxisLabels, stationPredictionData[chartName].dataSets[day], stationPredictionData[chartName].seriesLabels, borderColours, fillColours);
+    hourlyChart = createChart("bikesByHour", stationPredictionData[chartName].xAxisLabels, stationPredictionData[chartName].dataSets[dayNum], stationPredictionData[chartName].seriesLabels, borderColours, fillColours);
 }
