@@ -291,7 +291,7 @@ function chartMain() {
     // step 3: draw charts (elemId, chartType, showLegend, labels, dataPoints, dataLabels,  borderColours, fillColours)
     hourlyChart = createChart("bikesByHour", "line", true, stationPredictionData.bikesByHour.xAxisLabels, stationPredictionData.bikesByHour.dataSets[dayNum], stationPredictionData.bikesByHour.seriesLabels, borderColours, fillColours);
     dailyChart = createChart("bikesByWeekday", "bar", false, stationPredictionData.bikesByWeekday.xAxisLabels, stationPredictionData.bikesByWeekday.dataSets.week, stationPredictionData.bikesByWeekday.seriesLabels, borderColours, fillColours);
-    availabilityChart = freeBikesPie("bikeAvailability", stands[0].free_bikes, stands[0].free_stands);
+    //availabilityChart = freeBikesPie("bikeAvailability", stands[0].free_bikes, stands[0].free_stands);
 
     // request icons corresponding to weather forecast & display above hourly-bikes graph
     getWeatherForecast(stands[0].number, dayNum, populateWeatherIcons)
