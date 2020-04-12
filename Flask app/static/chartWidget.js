@@ -5,7 +5,7 @@ var fillColours = ["rgba(64, 204, 219, 0.8)", "rgba(184, 202, 204, 0.5)"];
 // an object for holding the predication data returned from the server for the currently selected stationId
 var stationPredictionData = {};
 var dateSelected = {}
-var dateDisp =new Date();
+var dateDisp = new Date();
 // holds the numeric representation [0-6] for the current weekday displayed in the "bikesByDay" chart
 // initialises to the current weekday
 var dayNum = new Date().getDay() - 1;
@@ -234,10 +234,11 @@ function updateActiveButton(){
     }
     buttons[dayNum].setAttribute("id","active")
 }
+
 function getDateData(station_id){
     // this code was found on stackoverflow:
     // https://stackoverflow.com/questions/12791378/get-the-most-recently-occurring-sunday
-        fetch("/date?id=" + station_id, {mode: "cors", method: "GET",})
+    fetch("/date?id=" + station_id, {mode: "cors", method: "GET",})
         .then(response => response.json())
         .then(
             function(body) {
@@ -311,7 +312,7 @@ function changeHourlyGraph(day) {
     // update dayNum var with new numeric representation of weekday
     dayNum = day;
     updateActiveButton();
-    dateDisp = new Date(dateSelected["days"][dayNum]*1000)
+    dateDisp = new Date(dateSelected["days"][dayNum]*1000);
     console.log(dateDisp.toLocaleDateString());
     document.getElementById("date").innerHTML = dateDisp.toLocaleDateString();
 
