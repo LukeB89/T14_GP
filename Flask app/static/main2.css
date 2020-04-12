@@ -337,6 +337,7 @@ span h2{
 .box-info{
     display: inline-block;
     border: 0.5rem solid gray;
+    border-radius: 0.5rem;
     width: 12rem;
     padding: 0;
     margin-left: 1rem;
