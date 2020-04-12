@@ -97,19 +97,23 @@ def get_station_current():
         response.headers.add('Access-Control-Allow-Origin', '*')
 
         return response
-    
+
+
 @app.route("/date")
 def get_station_date():
     """Allows client side to request current based on day and station selected"""
     station_id = request.args.get("id")
-    sql = "SELECT min(wf.dt) as dt, wf.day FROM dublinbikes.bike_weather_assoc bw, dublinbikes.weather_forecast wf WHERE wf.name = bw.weather_station AND bike_station_id = {} GROUP BY wf.day;".format(station_id)
+    sql = """
+        SELECT min(wf.dt) as dt, wf.day 
+        FROM dublinbikes.bike_weather_assoc bw, dublinbikes.weather_forecast wf 
+        WHERE wf.name = bw.weather_station AND bike_station_id = {} GROUP BY wf.day;""".format(station_id)
     current_date = engine.execute(sql)
     response = {
-            "days":{}
+            "days": {}
         }
     for row in current_date:
         day = row[1]
-        dt=row[0]
+        dt = row[0]
         response["days"][day] = dt
 
     return response
