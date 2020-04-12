@@ -29,6 +29,7 @@ bulk_data = """
 station_data = "select s.number, s.address from static_data s"
 ordered = " order by s.address asc"
 
+
 @app.route("/index")
 def index_page():
     # request co-ordinates, name, number & dynamic bikes/weather data from DataBase for each bike station
@@ -96,6 +97,28 @@ def get_station_current():
         response.headers.add('Access-Control-Allow-Origin', '*')
 
         return response
+
+
+@app.route("/get_weather_forecast")
+def get_weather_forecast():
+    """Allows client side to request weather forecast data associated with a given bike station ID"""
+    station_id = request.args.get("id")
+    day_num = request.args.get("day")
+
+    sql = """
+        select f.icon
+        from weather_forecast f, bike_weather_assoc a
+        where a.bike_station_id = %s and a.weather_station = f.name and f.day = %s
+        """ % (station_id, day_num)
+
+    forecast = engine.execute(sql)
+    response = []
+    for row in forecast:
+        response.append(dict(row)["icon"])
+
+    response = jsonify(response)
+    response.headers.add('Access-Control-Allow-Origin', '*')
+    return response
 
 
 @app.route("/get_station_prediction")
