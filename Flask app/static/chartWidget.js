@@ -1,6 +1,6 @@
 // define the colours to use when drawing & filling charts & graphs
 var borderColours = ["rgb(64, 204, 219)", "rgb(184, 202, 204)"];
-var fillColours = ["rgba(64, 204, 219, 0.8)", "rgba(184, 202, 204, 0.5)"];
+var fillColours = ["rgba(64, 204, 219, 0.8)", "rgba(102, 255, 255, 0.5)"];
 
 // an object for holding the predication data returned from the server for the currently selected stationId
 var stationPredictionData = {};
@@ -101,6 +101,7 @@ function createChart(elemId, chartType, showLegend, labels, dataPoints, dataLabe
                 datasets: lines
             },
             options: {
+                responsive: true,
                 scales: {
                     yAxes: [{
                         stacked: true,
@@ -266,20 +267,30 @@ function populateWeatherIcons(iconList) {
 
     ctx.setAttribute("z-index", 16777271);
     ctx.style.top = "250px";
+    ctx.style.paddingLeft = "15px";
+    ctx.style.paddingRight = "5px";
+
+    // the html defining the urls to the icon images
+    var html = "";
+
+    // keep track of the number of images added to var html
+    var c = 0;
 
     for (let icon of iconList) {
         for (i = 0; i < 3;i++) {
-            image = document.createElement("IMG");
-            image.setAttribute("src", "http://openweathermap.org/img/wn/" + icon + "@2x.png");
-            image.setAttribute("width", "4.3%");
-            image.setAttribute("z-index", 16777271);
 
-            ctx.appendChild(image);
+            // don't include the last icon (because there's no slot for 23: - 24:00)
+            if (c < 23) {
+                html += "<img src='http://openweathermap.org/img/wn/" + icon + "@2x.png'";
+                html += " width='4.3%' style='z-index: 16777271'><img>";}
+
+            // increment c
+            c += 1;
         }
     }
 
-    // remove the last child (because there's no slot for 23: - 24:00)
-    ctx.removeChild(ctx.lastChild);
+    ctx.innerHTML = html;
+
 }
 
 function chartMain() {
