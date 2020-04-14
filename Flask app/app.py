@@ -29,11 +29,13 @@ bulk_data = """
 station_data = "select s.number, s.address from static_data s"
 ordered = " order by s.address asc"
 
+
 @app.route("/index")
+@app.route("/")
 def index_page():
     # request co-ordinates, name, number & dynamic bikes/weather data from DataBase for each bike station
     statinfo = engine.execute(bulk_data+ordered)
-    return render_template('index2.html', title='Map', statinfo=statinfo)
+    return render_template('index.html', title='Map', statinfo=statinfo)
 
 
 @app.route("/index/route")
@@ -41,34 +43,20 @@ def index_page_route():
     statinfo = engine.execute(bulk_data+ordered)
     coords = {"dest":[float(request.args.get('tolat')),float(request.args.get('tolong'))],
             "origin":[float(request.args.get('fromlat')), float(request.args.get('fromlong'))]}
-    return render_template('routeindex2.html', title='Map', statinfo=statinfo, coordinates=coords)
+    return render_template('routeindex.html', title='Map-Route', statinfo=statinfo, coordinates=coords)
 
 
 @app.route("/info")
 def info_page():
     stat_addr = engine.execute(station_data+ordered)
-    return render_template('info2.html', stat_addr = stat_addr, statinfo="none")  # pulls home.html template from templates folder
+    return render_template('info.html', title='Station Information',stat_addr = stat_addr, statinfo="none")  
 
 
 @app.route("/info/<stat_id>")
 def info_page_refined(stat_id):
     statinfo = engine.execute(bulk_data+" and s.number = " + stat_id+ordered)
     stat_addr = engine.execute(station_data+ordered)
-    return render_template('info2.html', stat_addr = stat_addr,  statinfo = statinfo, page=stat_id)  # pulls home.html template from templates folder
-
-
-@app.route("/")
-def bikemap():
-    statinfo = engine.execute('select number, address, lat, lng from static_data')
-    bikenos = engine.execute('select number, available_bikes from bikes_current')
-    return render_template('map.html', title='Map', statinfo=statinfo, bikenos=bikenos)
-
-
-@app.route("/route")
-def routemap():
-    statinfo = engine.execute('select number, address, lat, lng from static_data')
-    return render_template('route.html', title='Route', statinfo=statinfo)
-
+    return render_template('info.html',title='Station Information', stat_addr = stat_addr,  statinfo = statinfo, page=stat_id)  
 
 @app.route("/get_weather_dublin")
 def get_weather_dublin():
@@ -96,21 +84,47 @@ def get_station_current():
         response.headers.add('Access-Control-Allow-Origin', '*')
 
         return response
-    
+
+
 @app.route("/date")
 def get_station_date():
     """Allows client side to request current based on day and station selected"""
     station_id = request.args.get("id")
-    sql = "SELECT min(wf.dt) as dt, wf.day FROM dublinbikes.bike_weather_assoc bw, dublinbikes.weather_forecast wf WHERE wf.name = bw.weather_station AND bike_station_id = {} GROUP BY wf.day;".format(station_id)
+    sql = """
+        SELECT min(wf.dt) as dt, wf.day 
+        FROM dublinbikes.bike_weather_assoc bw, dublinbikes.weather_forecast wf 
+        WHERE wf.name = bw.weather_station AND bike_station_id = {} GROUP BY wf.day;""".format(station_id)
     current_date = engine.execute(sql)
     response = {
-            "days":{}
+            "days": {}
         }
     for row in current_date:
         day = row[1]
-        dt=row[0]
+        dt = row[0]
         response["days"][day] = dt
 
+    return response
+
+
+@app.route("/get_weather_forecast")
+def get_weather_forecast():
+    """Allows client side to request weather forecast data associated with a given bike station ID"""
+    station_id = request.args.get("id")
+    day_num = request.args.get("day")
+
+    sql = """
+        select f.icon
+        from weather_forecast f, bike_weather_assoc a
+        where a.bike_station_id = %s and a.weather_station = f.name and f.day = %s
+        """ % (station_id, day_num)
+
+    forecast = engine.execute(sql)
+    response = []
+    for row in forecast:
+        response.append(dict(row)["icon"])
+
+    response = jsonify(response)
+    response.headers.add('Access-Control-Allow-Origin', '*')
     return response
 
 

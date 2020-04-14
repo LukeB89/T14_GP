@@ -129,23 +129,27 @@
         <!-- link js functions to request data & draw charts-->
         <script src="{{ url_for('static', filename='chartWidget.js') }}" ></script>
 
-        <div class="chartA" id="bikesByHourDiv" style="background-color: white">
+        <div class="chartA" id="bikesByHourDiv" style="background-color: white, position:relative, overflow: auto">
             <h2> Free Bikes & Stands by Hour</h2>
             <div id="bikesByHourBtns"></div>
-            <canvas id="bikesByHour" height="68px"></canvas>
 
-            <!-- Rectangular switch for selecting between COVID & non-COVID Data-->
-            
+
+
+            <canvas id="bikesByHour" height="68px" style="position: absolute"></canvas>
+
+            <!-- container for weather icons associated with the 3 hourly prediction-->
+            <div id="weatherIconsDiv" style="position: absolute"></div>
+
 
         </div>
-        <div class="chartB" id="bikesByWeekdayDiv" style="background-color: white">
+        <div class="chartB" id="bikesByWeekdayDiv" style="background-color: white, overflow: auto">
             <h2> Station Traffic by Day </h2>
             <canvas id="bikesByWeekday" height="68px"></canvas>
         </div>
 
         <script>
-            getChartData(stands[0].number, chartMain);
             getDateData(stands[0].number);
+            getChartData(stands[0].number, chartMain);
         </script>
 
 
