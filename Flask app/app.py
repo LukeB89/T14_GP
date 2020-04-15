@@ -31,10 +31,11 @@ ordered = " order by s.address asc"
 
 
 @app.route("/index")
+@app.route("/")
 def index_page():
     # request co-ordinates, name, number & dynamic bikes/weather data from DataBase for each bike station
     statinfo = engine.execute(bulk_data+ordered)
-    return render_template('index2.html', title='Map', statinfo=statinfo)
+    return render_template('index.html', title='Map', statinfo=statinfo)
 
 
 @app.route("/index/route")
@@ -42,34 +43,20 @@ def index_page_route():
     statinfo = engine.execute(bulk_data+ordered)
     coords = {"dest":[float(request.args.get('tolat')),float(request.args.get('tolong'))],
             "origin":[float(request.args.get('fromlat')), float(request.args.get('fromlong'))]}
-    return render_template('routeindex2.html', title='Map', statinfo=statinfo, coordinates=coords)
+    return render_template('routeindex.html', title='Map-Route', statinfo=statinfo, coordinates=coords)
 
 
 @app.route("/info")
 def info_page():
     stat_addr = engine.execute(station_data+ordered)
-    return render_template('info2.html', stat_addr = stat_addr, statinfo="none")  # pulls home.html template from templates folder
+    return render_template('info.html', title='Station Information',stat_addr = stat_addr, statinfo="none")  
 
 
 @app.route("/info/<stat_id>")
 def info_page_refined(stat_id):
     statinfo = engine.execute(bulk_data+" and s.number = " + stat_id+ordered)
     stat_addr = engine.execute(station_data+ordered)
-    return render_template('info2.html', stat_addr = stat_addr,  statinfo = statinfo, page=stat_id)  # pulls home.html template from templates folder
-
-
-@app.route("/")
-def bikemap():
-    statinfo = engine.execute('select number, address, lat, lng from static_data')
-    bikenos = engine.execute('select number, available_bikes from bikes_current')
-    return render_template('map.html', title='Map', statinfo=statinfo, bikenos=bikenos)
-
-
-@app.route("/route")
-def routemap():
-    statinfo = engine.execute('select number, address, lat, lng from static_data')
-    return render_template('route.html', title='Route', statinfo=statinfo)
-
+    return render_template('info.html',title='Station Information', stat_addr = stat_addr,  statinfo = statinfo, page=stat_id)  
 
 @app.route("/get_weather_dublin")
 def get_weather_dublin():
@@ -287,4 +274,4 @@ def get_station_prediction():
 
 # allows us to run directly with python i.e. don't have to set env variables each time
 if __name__ == '__main__':
-    app.run(debug=True)
+    app.run(host="0.0.0.0", port=80, debug=True)

@@ -68,17 +68,17 @@ function weatherAlert() {
 var backgroundImages = new Object;
 backgroundImages["Thunderstorm"] = "thunder1.gif";
 backgroundImages["Drizzle"] = "drizzle1.gif";
-backgroundImages["Snow"] = "default_weather.gif";
-backgroundImages["Mist"] = "default_weather.gif";
+backgroundImages["Snow"] = "snow1.gif";
+backgroundImages["Mist"] = "mist1.gif";
 backgroundImages["Smoke"] = "default_weather.gif";
 backgroundImages["Haze"] = "default_weather.gif";
 backgroundImages["Dust"] = "default_weather.gif";
-backgroundImages["Fog"] = "default_weather.gif";
+backgroundImages["Fog"] = "fog1.gif";
 backgroundImages["Sand"] = "default_weather.gif";
 backgroundImages["Ash"] = "default_weather.gif";
-backgroundImages["Squall"] = "default_weather.gif";
+backgroundImages["Squall"] = "squall1.gif";
 backgroundImages["Tornado"] = "default_weather.gif";
-backgroundImages["Clear"] = "clear1.gif";
+backgroundImages["Clear"] = "clear2.gif";
 backgroundImages["Clouds"] = "clouds1.gif";
 backgroundImages["Rain"] = "rain2.gif";
 

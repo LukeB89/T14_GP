@@ -9,16 +9,12 @@
     {% endif %}
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/css/bootstrap.min.css" integrity="sha384-Vkoo8x4CGsO3+Hhxv8T/Q5PaXtkKtu6ug5TOeNV6gBiFeWPGFN9MuhOf23Q9Ifjh" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.4.1.slim.min.js" integrity="sha384-J6qa4849blE2+poT4WnyKhv5vZF5SrPo0iEjwBvKU7imGFAV0wwj1yYfoRSJoZ+n" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.4.1/js/bootstrap.min.js" integrity="sha384-wfSDF2E50Y2D1uUdj0O3uMBJnjuUD4Ih7YwaYd1iqfktj0Uod8GCExl3Og8ifwB6" crossorigin="anonymous"></script>
     <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='main.css') }}">
 
 
     <!-- Placeholder styling for the sliding checkbox which switches between pre & post quarantine dataSets -->
     <style>
-    .switch {position: relative; display: inline-block; width: 60px; height: 34px;}
+    .switch {position: relative; display: inline-block; width: 60px; height: 34px; margin-left: 2rem;}
     /* Hide default HTML checkbox */
     .switch input {opacity: 0; width: 0; height: 0;}
     /* The slider */
@@ -40,6 +36,7 @@
                      free_stands:"Empty Stands:", lat:"Station Latitude:", lng:"Station Longitude:", banking:"Payment Terminal:", bonus:"Bonus Station:"}
     var isEmpty = true;
     var main_div, head, row, info_name, info_value, container;
+    
     {% if statinfo == "none" %}
         isEmpty = true;
     {% else %}
@@ -60,235 +57,109 @@
                     bonus:"{{ i[11] }}"});
         {% endfor %}
     {% endif %}
-    
-    console.log(stands)
-    
-    
+
     function load(){
         main_div = document.getElementById("station_info");
         if (isEmpty){
-            head = document.createElement("H1");
-            head.innerHTML = "<strong>Station Information</strong>";
+            head = document.createElement("SPAN");
+            head.innerHTML = "<h1><strong>Station Information</strong></h1>";
             main_div.appendChild(head);
+            row = document.createElement("SPAN");
+            row.innerHTML = "<h2><strong>Please Select a Station</strong></h2>";
+            main_div.appendChild(row);
         } else {
-            head = document.createElement("H1");
-            head.innerHTML = "<strong>Station Information</strong>";
+            head = document.createElement("SPAN");
+            head.innerHTML = "<h1><strong>Station Information</strong></h1>";
             main_div.appendChild(head);
-            
+
             container = document.createElement("DIV");
-            container.setAttribute("class","container w-100");
-            container.setAttribute("style", "background-color: brown");
+            container.setAttribute("class","info-container");
             for(var key in info_rows){
-                
-                row = document.createElement("DIV");
-                row.setAttribute("class","row");
+
                 info_name = document.createElement("DIV");
-                info_name.setAttribute("class","col-5 col-sm-3 col-md-3 col-lg-4 col-xl-5");
+                info_name.setAttribute("class","col");
                 info_name.innerHTML = "<h5><strong>"+info_rows[key]+"</strong></h5>";
-                row.appendChild(info_name);
+                container.appendChild(info_name);
                 info_value = document.createElement("DIV");
-                info_value.setAttribute("class","col-5 col-sm-4 col-md-4 col-lg-4 col-xl-5 ml-auto");
+                info_value.setAttribute("class","col");
                 info_value.innerHTML = "<h5><strong>"+stands[0][key]+"</strong></h5>"
-                row.appendChild(info_value);
-                container.appendChild(row);
+                container.appendChild(info_value);
             }
             main_div.appendChild(container);
+
+
+        }
+        
+        var links = document.getElementsByClassName("side-list");
+        for(var i = 0; i < links.length; i++){
             
-            
+            if(links[i].getAttribute("HREF") == window.location.pathname){
+                links[i].setAttribute("class","active");
+                break;
+            }
+                
         }
     }
-    
-    
+
+
 </script>
 <body onload="load()">
-    <nav class="navbar navbar-expand-lg navbar-light navbar-right" style="background-color: rgba(42, 42, 46, 1)">
-        <a class="navbar-brand" href="#">
-            <h1><strong>dublinbikes</strong></h1>
-        </a>
-        <button class="navbar-toggler collapsed" type="button" data-toggle="collapse" data-target="#navbarColor03" aria-controls="navbarColor03" aria-expanded="false" aria-label="Toggle navigation">
-            <span class="navbar-toggler-icon"></span>
-        </button>
-
-        <div class="navbar-collapse collapse" id="navbarColor03">
-            <ul class="navbar-nav ml-auto">
-                <li class="nav-item">
-                    <a class="nav-link" href="/index">
-                        <h5>Map</h5>
-                    </a>
-                </li>
-                <li class="nav-item  active">
-                    <a class="nav-link" href="/info">
-                        <h5>Info</h5>
-                    </a>
-                </li>
-            </ul>
-        </div>
-    </nav>
-
-
-    <div class="container-fluid">
-        <div class="row">
-            <div class="sidebar col-sm-2">
-                <nav class="nav flex-column">
-                    <ul class="nav flex-column nav_tabs">
-                        {% for station in stat_addr %}
-                        <li class="nav-item"><a class="nav-link" href="/info/{{station[0]}}">{{station[1]}}</a></li>
-                        {% endfor %}
-                    </ul>
-                </nav>
+    <div class="header">
+        <a href="/index" class="logo">dublinbikes</a>
+            <div class="header-right">
+                <a href="/index">Map</a>
+                <a href="/info">Info</a>
             </div>
+        </div>
 
-            <main class="col-12 col-md-10 col-xl-10 ml-auto maindiv" role="main" style="background-color: rgba(237, 237, 238, 1)">
-                <div class="row">
-                    <div class="col-6 col-md-5 col-xl-5" style="background-color: rgba(237, 237, 238, 1)" id=station_info>
-                        <!--put in station information related Items here-->
-<!--
-                        {% if stat_info == "none" %}
-                        <h2 style="font-size: 1em"> Station Information </h2>
-                        {% else %}
-                        {% for line in stat_info %}
-                        <h2><strong> Station Information </strong></h2>
-                        <div class="container w-100">
-                            <div class="row">
-                                <div class="col-5 col-sm-3 col-md-3 col-lg-4 col-xl-5">
-                                    <h4><strong>Station ID:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-lg-4 col-xl-5 ml-auto">
-                                    <h4 id="stationIdForCharts">{{line[0]}}</h4>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Station Name:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    <h4>{{line[2]}}</h4>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Station Address:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    <h4>{{line[3]}}</h4>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Station Latitude:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    <h4>{{line[4]}}</h4>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Station Longitude:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    <h4>{{line[5]}}</h4>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Payment Terminal:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    {% if line[6] == "TRUE" %}
-                                    <h4>Yes</h4>
-                                    {% else %}
-                                    <h4>No</h4>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                            <div class="row">
-                                <div class="col-5 col-md-4 col-xl-4">
-                                    <h4><strong>Bonus Station:</strong></h4>
-                                </div>
-                                <div class="col-5 col-md-4 col-xl-4 ml-auto">
-                                    {% if line[7] == "TRUE" %}
-                                    <h4>Yes</h4>
-                                    {% else %}
-                                    <h4>No</h4>
-                                    {% endif %}
-                                </div>
-                            </div>
-                            <div class="row">
-                                <p></p>
-                            </div>
-                        </div>
-                        {% endfor%}
-                        {% endif %}
--->
 
-                    </div>
-                    <div class="col-6 col-md-7 col-xl-7 ml-auto" style="background-color: aqua">
+    <div class="container">
+        <nav class="sidebar">
+            {% for station in stat_addr %}
+            <a href="/info/{{station[0]}}" class="side-list">{{station[1]}}</a>
+            {% endfor %}
+        </nav>
 
-                        <!-- link js module containing tools for drawing charts -->
-                        <script src="{{ url_for('static', filename='/jsModules/chart.js/dist/Chart.js') }}"></script>
-                        <!-- link js functions to request data & draw charts-->
-                        <script src="{{ url_for('static', filename='chartWidget.js') }}" ></script>
+        <div class="info-panel" id=station_info>
+        </div>
 
-                        <div class="row" id="bikesByHourDiv" style="background-color: white">
-                            <h2> Free Bikes & Stands by Hour</h2>
-                            <div class="col-7" id="bikesByHourBtns"></div>
-                            <canvas id="bikesByHour" width="100%" height="25%"></canvas>
 
-                            <!-- Rectangular switch for selecting between COVID & non-COVID Data-->
-                            <label class="switch">
-                                <input id="showCovidDataSwitch" type="checkbox" onclick="changeHourlyGraph(dayNum)">
-                                <span class="slider"></span>
-                            </label>
+        <!-- link js module containing tools for drawing charts -->
+        <script src="{{ url_for('static', filename='/jsModules/chart.js/dist/Chart.js') }}"></script>
+        <!-- link js functions to request data & draw charts-->
+        <script src="{{ url_for('static', filename='chartWidget.js') }}" ></script>
 
-                        </div>
-                        <div class="row" id="bikesByWeekdayDiv" style="background-color: yellow">
-                            <h2> Station Traffic by Day </h2>
-                            <canvas id="bikesByWeekday" width="100%" height="25%"></canvas>
-                        </div>
+        <div class="chartA" id="bikesByHourDiv" style="background-color: white, position:relative, overflow: auto">
+            <h2> Free Bikes & Stands by Hour</h2>
+            <div id="bikesByHourBtns"></div>
 
-                        <script>
-                            getChartData(stands[0].number, chartMain);
-                        </script>
 
-                    </div>
-                </div>
-            </main>
+
+            <canvas id="bikesByHour" height="68px" style="position: absolute"></canvas>
+
+            <!-- container for weather icons associated with the 3 hourly prediction-->
+            <div id="weatherIconsDiv" style="position: absolute"></div>
+
 
         </div>
+        <div class="chartB" id="bikesByWeekdayDiv" style="background-color: white, overflow: auto">
+            <h2> Station Traffic by Day </h2>
+            <canvas id="bikesByWeekday" height="68px"></canvas>
+        </div>
+
+        <script>
+            getDateData(stands[0].number);
+            getChartData(stands[0].number, chartMain);
+        </script>
+
+
     </div>
 
 
 
-    <nav class=" navbar fixed-bottom navbar-expand-lg navbar-light" style="background-color: rgba(42, 42, 46, 1)">
-        <div class="container">
-            <div class="row w-100">
-                <div class="col">
-                </div>
-                <div class="col">
-                    <p class="text-center text-muted"><strong style="color: rgba(237, 237, 238, 1)">Team 14</strong></p>
-                </div>
-                <div class="col"></div>
-            </div>
-        </div>
-    </nav>
+    <footer>
+        <p><strong>Team 14</strong></p>
+    </footer>
 
 
 </body>
