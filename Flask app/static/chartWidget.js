@@ -146,7 +146,6 @@ function getWeatherForecast(stationId, dayNum, callback) {
 
     fetch("/get_weather_forecast?id=" + stationId +"&day=" + dayNum, {mode: "cors", method: "GET",})
         .then(response => response.json())
-        //.then(body => console.log(body))
         .then(
             function(body) {
                 console.log("Data received");
@@ -161,8 +160,6 @@ function getWeatherForecast(stationId, dayNum, callback) {
 
 function freeBikesPie(elemId, bikes, stands) {
 
-    console.log(bikes);
-    console.log(stands);
 
     // get the chart container from the info.html page
     var ctx = document.getElementById(elemId);
@@ -222,7 +219,7 @@ function populateSelectOptions(dropdownId, chartName) {
         //selectionList.innerHTML += '<option value="' + i + '" onclick=changeHourlyGraph(' + i + ') >' + i + '</option>';
     }
     document.getElementById("bikesByHourBtns").innerHTML += '<label class="switch"> <input id="showCovidDataSwitch" type="checkbox" onclick="changeHourlyGraph(dayNum)"><span class="slider"></span></label><span id="slabel"><strong>Pandemic Data</strong></span>'
-    
+    // display current date data
     document.getElementById("bikesByHourBtns").innerHTML += '<div class="box-info"><h4><strong>Viewing Day</strong></h4><p id="date">' + dateDisp.toLocaleDateString() + '</p></div>'
 }
 
@@ -237,14 +234,14 @@ function updateActiveButton(){
 }
 
 function getDateData(station_id){
-    // this code was found on stackoverflow:
-    // https://stackoverflow.com/questions/12791378/get-the-most-recently-occurring-sunday
+    // get date information from server
     fetch("/date?id=" + station_id, {mode: "cors", method: "GET",})
         .then(response => response.json())
         .then(
             function(body) {
                 dateSelected = body;
                 console.log("Data received");
+                // update current date data
                 dateDisp = new Date(dateSelected["days"][dayNum]*1000)
             })
         .catch(
@@ -252,12 +249,7 @@ function getDateData(station_id){
                 console.log('Request failed', error);
                 return false;
         });
-//    var tempDay = dayNum +1 ;
-//
-//    var now = new Date();
-//    var today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
-//    var dateToDisplay = new Date(today.setDate(today.getDate()-today.getDay()+tempDay));
-//    return dateToDisplay;
+
 }
 
 function populateWeatherIcons(iconList) {
@@ -323,8 +315,8 @@ function changeHourlyGraph(day) {
     // update dayNum var with new numeric representation of weekday
     dayNum = day;
     updateActiveButton();
+    // update current date data
     dateDisp = new Date(dateSelected["days"][dayNum]*1000);
-    console.log(dateDisp.toLocaleDateString());
     document.getElementById("date").innerHTML = dateDisp.toLocaleDateString();
 
     // draw the new chart
