@@ -83,8 +83,8 @@
         function handleLocationError(browserHasGeolocation, loc, pos) {
             loc.setPosition(pos);
             loc.setContent(browserHasGeolocation ?
-                              'Error: The Geolocation service failed.' :
-                              'Error: Your browser doesn\'t support geolocation.');
+                              'Geolocation service unavailable.' :
+                              'Your browser doesn\'t support geolocation.');
             loc.open(map);
         }
 
@@ -154,9 +154,14 @@
     function buildURL(){
         var origin = document.getElementById('from').value.split(',');
         var dest = document.getElementById('to').value.split(',');
-        var url = "/index/route?tolat="+dest[0]+"&tolong="+dest[1];
-        url += "&fromlat="+origin[0]+"&fromlong="+origin[1];
-        window.location = url;
+        if (origin != 0 && dest != 0) {
+            var url = "/index/route?tolat="+dest[0]+"&tolong="+dest[1];
+            url += "&fromlat="+origin[0]+"&fromlong="+origin[1];
+            window.location = url;
+        } else {
+            alert("Error: Please select appropriate route.");
+        }
+
     }
 
     function buildInfoURL(station){
