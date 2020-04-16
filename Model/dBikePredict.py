@@ -7,14 +7,12 @@ Methods for predicting and updating hourly prediction tables in the database
 """
 # Set up libraries
 import pandas as pd
-import numpy as np
 import pickle
-# from sklearn.linear_model import LinearRegression
 from sqlalchemy import create_engine
 from configparser import ConfigParser
-from datetime import datetime
 
- # Configure the connection
+
+# Configure the connection
 config = ConfigParser()
 config.read("config.ini")
 options = config["DataBase"]
