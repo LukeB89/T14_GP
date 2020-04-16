@@ -5,7 +5,6 @@ methods for retrieving and sending data to the Team 14 RDS Database
 """
 
 import mysql.connector
-import traceback
 from configparser import ConfigParser
 
 # read DataBase info from the config file
@@ -93,7 +92,7 @@ def db_query(**kwargs):
 
         # checks to see if primary keys are supplied
         # added in so that primary key data could be changed
-        if pkeys != None:
+        if pkeys is None:
             for key in data:
                 sql += " `%s` = '%s'," % (key, data[key])
             sql = sql[:-1]
