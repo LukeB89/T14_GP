@@ -56,7 +56,9 @@ def info_page():
 def info_page_refined(stat_id):
     statinfo = engine.execute(bulk_data+" and s.number = " + stat_id+ordered)
     stat_addr = engine.execute(station_data+ordered)
-    return render_template('info.html',title='Station Information', stat_addr = stat_addr,  statinfo = statinfo, page=stat_id)  
+    return render_template('info.html', title='Station Information', stat_addr=stat_addr,
+                           statinfo=statinfo, page=stat_id)
+
 
 @app.route("/get_weather_dublin")
 def get_weather_dublin():
