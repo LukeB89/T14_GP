@@ -12,6 +12,9 @@
     <link rel="stylesheet" style="text/css" href="{{ url_for('static', filename='main.css') }}">
     <link rel="icon" type="image/png" href="/static/pin_green.png">
 </head>
+
+<!-- load script for creating customised drop-down selection menus-->
+<script src="/static/dropDownWidget.js"></script>
 <script type="text/javascript">
     var stands = [];
     {% for i in statinfo %}
@@ -36,6 +39,9 @@
             from.innerHTML += '<option value="' + i.lat + ',' + i.lng + '">' + i.address + '</option>';
             to.innerHTML += '<option value="' + i.lat + ',' + i.lng + '">' + i.address + '</option>';
             }
+
+        // restyle the drop-down selections
+        createCustomDropDowns()
     }
 
     function initMap() {
@@ -212,12 +218,17 @@
                 </script>
                 <h3>Select your route:</h3>
                 <div id="tofrom">
-                    <select id="from">
-                        <option value="0">Choose starting point</option>
-                    </select>
-                    <select id="to">
-                        <option value="0">Choose destination</option>
-                    </select>
+                    <div class="custom-select">
+                        <select id="from">
+                            <option value="0">Choose starting point</option>
+                        </select>
+                    </div>
+                    <div class="custom-select">
+                        <select id="to">
+                            <option value="0">Choose destination</option>
+                        </select>
+                    </div>
+
                 </div>
                 <button type="button" onclick="buildURL()">Lets go!</button>
             </div>
@@ -225,6 +236,7 @@
 
         </div>
     </div>
+
     <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5ydZwuT-hJt9fmBA5_sHnIWeE3JgvjCY&callback=initMap"  async defer ></script>
 </body>
 
