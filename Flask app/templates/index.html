@@ -187,7 +187,7 @@
 
 </script>
 
-<body onload="load()">
+<body>
     <div class="header">
         <a href="/index" class="logo">dublinbikes</a>
         <div class="header-right">
@@ -214,6 +214,8 @@
                 </div>
 
                 <script>
+                    // loading the dropdown menues
+                    load();
                     // directory where weather gifs are stored
                     var gifsPath = "{{ url_for('static', filename='weather_gifs/') }}";
                     //call updateClock() every 1000 milliseconds
