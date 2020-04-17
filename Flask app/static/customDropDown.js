@@ -18,6 +18,7 @@ function createCustomDropDowns() {
         var currentSelection = document.createElement("DIV");
         currentSelection.setAttribute("class", "select-selected");
 
+
         // set the innerHTML of the 'currently selected' div to be whatever the
         // currently selected option from the parent 'SELECT' element is
         currentSelection.innerHTML = select.options[select.selectedIndex].innerHTML;
@@ -35,7 +36,7 @@ function createCustomDropDowns() {
             item.innerHTML = select.options[j].innerHTML;
 
             // define an 'on-click' function to update the original select box and the selected item
-            item.addEventListener("click", function(e) {
+            item.addEventListener("click", function (e) {
 
                 // get the 'SELECT' element corresponding to the the parent SELECT list
                 parentSelect = this.parentNode.parentNode.getElementsByTagName("select")[0];
@@ -70,7 +71,7 @@ function createCustomDropDowns() {
 
         dropDowns[i].appendChild(options);
 
-        currentSelection.addEventListener("click", function(elem) {
+        currentSelection.addEventListener("click", function (elem) {
             /* When the select box is clicked, close any other select boxes,
             and open/close the current select box: */
 
@@ -79,7 +80,7 @@ function createCustomDropDowns() {
             this.nextSibling.classList.toggle("select-hide");
             this.classList.toggle("select-arrow-active");
 
-      });
+        });
     }
 }
 

@@ -16,34 +16,36 @@
 <!-- load script for creating customised drop-down selection menus-->
 <script src="/static/customDropDown.js"></script>
 <script type="text/javascript">
-    var stands = [];
+    var stands = []; 
     {% for i in statinfo %}
-    stands.push({lat:{{ i[-2] }},
-                lng:{{ i[-1] }},
-                address:"{{ i[1] }}",
-                number:{{ i[0] }},
-                status:"{{ i[2] }}",
-                free_bikes:{{ i[4] }},
-                free_stands:{{ i[3] }},
-                weather_img:"{{ i[6] }}",
-                weather_type:"{{ i[5] }}",
-                temp:{{ '%.2f'%(i[7] - 273.15) }},
-                feels_like:{{ '%.2f'%(i[8] - 273.15) }},
-                banking:"{{ i[10] }}",
-                bonus:"{{ i[11] }}"});
+    stands.push({
+        lat: {{i[-2]}},
+        lng: {{i[-1]}},
+        address: "{{ i[1] }}",
+        number: {{i[0]}},
+        status: "{{ i[2] }}",
+        free_bikes: {{i[4]}},
+        free_stands: {{i[3]}},
+        weather_img: "{{ i[6] }}",
+        weather_type: "{{ i[5] }}",
+        temp: {{'%.2f' % (i[7] - 273.15)}},
+        feels_like: {{'%.2f' % (i[8] - 273.15)}},
+        banking: "{{ i[10] }}",
+        bonus: "{{ i[11] }}"}); 
     {% endfor %}
-    function load(){
+
+    function load() {
         var from = document.getElementById("from");
         var to = document.getElementById("to");
         for (let i of stands) {
             from.innerHTML += '<option value="' + i.lat + ',' + i.lng + '">' + i.address + '</option>';
             to.innerHTML += '<option value="' + i.lat + ',' + i.lng + '">' + i.address + '</option>';
-            }
+        }
 
         // restyle the drop-down selections
         createCustomDropDowns()
     }
-
+    // function to initialise the map
     function initMap() {
         var prev_iw = false;
         var loc;
@@ -52,76 +54,82 @@
         var to = document.getElementById("to");
         radius = 20, zoom = 14;
 
-        var location = {lat: 53.3498, lng: -6.2603};
+        var location = {
+            lat: 53.3498,
+            lng: -6.2603
+        };
         var map = new google.maps.Map(document.getElementById("map"), {
-        zoom : zoom,
-        center : location
+            zoom: zoom,
+            center: location
         });
 
 
-<!--adding you are here info window - reference: google documentation-->
+        //<!--adding you are here info window - reference: google documentation-->
         loc = new google.maps.InfoWindow;
 
         if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
-            loc.setPosition(pos);
-            loc.setContent('You are here!');
-            loc.open(map);
-            map.setCenter(pos);
-            addMyLoc(pos);
-          }, function() {
-            handleLocationError(true, loc, map.getCenter());
-          });
+            navigator.geolocation.getCurrentPosition(function(position) {
+                pos = {
+                    lat: position.coords.latitude,
+                    lng: position.coords.longitude
+                };
+                loc.setPosition(pos);
+                loc.setContent('You are here!');
+                loc.open(map);
+                map.setCenter(pos);
+                addMyLoc(pos);
+            }, function() {
+                handleLocationError(true, loc, map.getCenter());
+            });
         } else {
-          // Browser doesn't support Geolocation
-          handleLocationError(false, loc, map.getCenter());
+            // Browser doesn't support Geolocation
+            handleLocationError(false, loc, map.getCenter());
         }
 
-<!--adding user location to starting point drop down-->
+        //<!--adding user location to starting point drop down-->
         function addMyLoc(position) {
             from.innerHTML += '<option value="' + position.lat + ',' + position.lng + '">My location</option>';
         }
 
-<!--error handling function for geolocation-->
+        //<!--error handling function for geolocation-->
         function handleLocationError(browserHasGeolocation, loc, pos) {
             loc.setPosition(pos);
             loc.setContent(browserHasGeolocation ?
-                              'Geolocation service unavailable.' :
-                              'Your browser doesn\'t support geolocation.');
+                'Geolocation service unavailable.' :
+                'Your browser doesn\'t support geolocation.');
             loc.open(map);
         }
 
-<!--add station markers-->
+        //<!--add station markers-->
 
         for (let i of stands) {
 
             addMarkers({
-            coords:{lat:i.lat,lng:i.lng},
-            content:'<div id="iw"><h4>#'+i.number+': '+i.address+'</h4><h6>Status: '+i.status+'</h6><h6>Available Stands: '+i.free_stands+'</h6><h6>Available Bikes: '+i.free_bikes+'</h6><img src="http://openweathermap.org/img/wn/'+i.weather_img+'@2x.png" alt="'+i.weather_type+'"><p>'+i.temp+'&#176; but feels like '+i.feels_like+'&#176;</p><button id="infobutton" onclick="buildInfoURL('+i.number+')">Info</button></div>',
-            pin: i.free_bikes
+                coords: {
+                    lat: i.lat,
+                    lng: i.lng
+                },
+                content: '<div id="iw"><h4>#' + i.number + ': ' + i.address + '</h4><h6>Status: ' + i.status + '</h6><h6>Available Stands: ' + i.free_stands + '</h6><h6>Available Bikes: ' + i.free_bikes + '</h6><img src="http://openweathermap.org/img/wn/' + i.weather_img + '@2x.png" alt="' + i.weather_type + '"><p>' + i.temp + '&#176; but feels like ' + i.feels_like + '&#176;</p><button id="infobutton" onclick="buildInfoURL(' + i.number + ')">Info</button></div>',
+                pin: i.free_bikes
             });
 
         }
 
-        function addMarkers(prop){
+        function addMarkers(prop) {
             var marker = new google.maps.Marker({
-                position : prop.coords,
-                map : map
+                position: prop.coords,
+                map: map
             });
 
-<!--add station info windows-->
+            //<!--add station info windows-->
 
-            if(prop.content){
+            if (prop.content) {
                 var infoWindow = new google.maps.InfoWindow({
-                content : prop.content
+                    content: prop.content
                 });
 
-<!--colour changing pins-->
-            if (prop.pin >= 13){
+                //<!--colour changing pins-->
+                if (prop.pin >= 13) {
                     marker.setIcon('/static/pin_green.png')
                 } else if (prop.pin < 13 && prop.pin > 5) {
                     marker.setIcon('/static/pin_amber.png')
@@ -131,7 +139,7 @@
 
             }
 
-<!--toggling for station info windows-->
+            //<!--toggling for station info windows-->
             google.maps.event.addListener(marker, 'click', function() {
                 if (prev_iw) {
                     prev_iw.close();
@@ -141,11 +149,10 @@
             });
 
             google.maps.event.addListener(marker, 'click', function() {
-                if(!marker.open){
-                    infoWindow.open(map,marker);
+                if (!marker.open) {
+                    infoWindow.open(map, marker);
                     marker.open = true;
-                }
-                else{
+                } else {
                     infoWindow.close();
                     marker.open = false;
                 }
@@ -157,21 +164,22 @@
         }
 
     }
-
-    function buildURL(){
+    // a function used to create the route building link that the user is brought to and
+    // this data is ecxtracted in order to determin the route
+    function buildURL() {
         var origin = document.getElementById('from').value.split(',');
         var dest = document.getElementById('to').value.split(',');
         if (origin != 0 && dest != 0) {
-            var url = "/index/route?tolat="+dest[0]+"&tolong="+dest[1];
-            url += "&fromlat="+origin[0]+"&fromlong="+origin[1];
+            var url = "/index/route?tolat=" + dest[0] + "&tolong=" + dest[1];
+            url += "&fromlat=" + origin[0] + "&fromlong=" + origin[1];
             window.location = url;
         } else {
             alert("Error: Please select appropriate route.");
         }
 
     }
-
-    function buildInfoURL(station){
+    // function to build the info link url for when the stations info button is selected 
+    function buildInfoURL(station) {
         var link = "/info/";
         link += station;
         window.location = link;
@@ -215,6 +223,7 @@
                     //call updateWeather() every 30000 milliseconds
                     updateWeather(gifsPath);
                     setInterval(updateWeather(gifsPath), 30000);
+
                 </script>
                 <h3>Select your route:</h3>
                 <div id="tofrom">
@@ -237,7 +246,7 @@
         </div>
     </div>
 
-    <script  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5ydZwuT-hJt9fmBA5_sHnIWeE3JgvjCY&callback=initMap"  async defer ></script>
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyA5ydZwuT-hJt9fmBA5_sHnIWeE3JgvjCY&callback=initMap" async defer></script>
 </body>
 
 </html>

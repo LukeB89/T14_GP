@@ -4,18 +4,20 @@ Version: 0.1
 @author: Luke Byrne
 main method to call scrapers
 '''
-# Import liberies for use of the  
+# Import liberies for use
 import get_bikes_data as bikes
 import get_weather_data as weather
 import csv
 
 def main():
-    
-#   main code which is tasked with running the JSON Parser
-#   keeps a log to ensure the returned API information doesnt crash the program.
-    
+    # obtaining all of the forcasted data with a log should there be an error
     with open('log.txt', 'a', newline='') as file:
-        weather.get_forecast_all()
+        log_out = csv.writer(file)
+        try:
+            weather.get_forecast_all()
+        except:
+            log_out.writerow(["Error detected in Weather Data retrieval."])
     return
+# initial code to be run
 if __name__ == '__main__':
     main()
