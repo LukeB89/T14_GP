@@ -34,8 +34,6 @@ function createCustomDropDowns() {
             item = document.createElement("DIV");
             item.innerHTML = select.options[j].innerHTML;
 
-            console.log(item);
-
             // define an 'on-click' function to update the original select box and the selected item
             item.addEventListener("click", function(e) {
 
