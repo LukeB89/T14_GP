@@ -214,8 +214,7 @@
                 </div>
 
                 <script>
-                    // loading the dropdown menues
-                    load();
+                    
                     // directory where weather gifs are stored
                     var gifsPath = "{{ url_for('static', filename='weather_gifs/') }}";
                     //call updateClock() every 1000 milliseconds
@@ -243,7 +242,10 @@
                 </div>
                 <button type="button" onclick="buildURL()">Lets go!</button>
             </div>
-
+            <script>
+                // loading the dropdown menues
+                load();
+            </script>
 
         </div>
     </div>
